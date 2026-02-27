@@ -17,6 +17,7 @@ import {
   VerificationRequestsPage,
   AdminAnalyticsPage,
   AdminModerationPage,
+  AdminProfilePage,
 } from '@/features/admin';
 
 // Feature pages — Campus
@@ -50,12 +51,14 @@ import { PostGigPage, MyGigsPage, ApplicantsPage, RecruitmentStatusPage } from '
 import { ChatPage } from '@/features/chat';
 
 export const router = createBrowserRouter([
-  /* ── Public / Auth routes ────────────────────────── */
+  /* ── Auth (full-screen sliding login/register) ───── */
+  { path: '/login', element: <LoginPage /> },
+  { path: '/register', element: <LoginPage /> },
+
+  /* ── Other Auth routes (keep AuthLayout) ─────────── */
   {
     element: <AuthLayout />,
     children: [
-      { path: '/login', element: <LoginPage /> },
-      { path: '/register', element: <RegisterPage /> },
       { path: '/forgot-password', element: <ForgotPasswordPage /> },
     ],
   },
@@ -74,7 +77,7 @@ export const router = createBrowserRouter([
           { path: '/admin/analytics', element: <AdminAnalyticsPage /> },
           { path: '/admin/moderation', element: <AdminModerationPage /> },
           { path: '/admin/chat', element: <ChatPage /> },
-          { path: '/admin/settings', element: <Placeholder title="Admin Settings" /> },
+          { path: '/admin/profile', element: <AdminProfilePage /> },
         ],
       },
     ],
@@ -97,7 +100,6 @@ export const router = createBrowserRouter([
           { path: '/campus/opportunities/:oppId/applicants', element: <CompanyApplicantsPage /> },
           { path: '/campus/analytics', element: <CampusAnalyticsPage /> },
           { path: '/campus/chat', element: <ChatPage /> },
-          { path: '/campus/settings', element: <Placeholder title="Campus Settings" /> },
         ],
       },
     ],

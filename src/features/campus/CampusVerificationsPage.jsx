@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {
-  PageHeader, Card, Badge, Avatar, Button,
+  PageHeader, Card, Badge, Avatar, Button, Modal,
   Table, TableHead, TableHeader, TableBody, TableRow, TableCell,
 } from '@/components/shared';
 import { CheckIcon, XMarkIcon, EyeIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
@@ -17,6 +17,7 @@ const statusColor = { pending: 'yellow', approved: 'green', rejected: 'red' };
 
 export default function CampusVerificationsPage() {
   const [requests, setRequests] = useState(REQUESTS);
+  const [viewRequest, setViewRequest] = useState(null);
   const pending = requests.filter((r) => r.status === 'pending');
 
   const handleAction = (id, action) => {
@@ -118,7 +119,8 @@ export default function CampusVerificationsPage() {
                         <XMarkIcon className="h-4 w-4" />
                       </button>
                       <button
-                        className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
+                        onClick={() => setViewRequest(r)}
+                        className="rounded-lg p-1.5 text-gray-400 hover:bg-indigo-50 hover:text-indigo-600 transition-colors"
                         title="View document"
                       >
                         <EyeIcon className="h-4 w-4" />
@@ -133,6 +135,67 @@ export default function CampusVerificationsPage() {
           </TableBody>
         </Table>
       </Card>
+      {/* ── View Document Modal ── */}
+      <Modal open={!!viewRequest} onClose={() => setViewRequest(null)} title="Verification Request" size="md">
+        {viewRequest && (
+          <div className="space-y-4">
+            <div className="flex items-center gap-4">
+              <Avatar name={viewRequest.name} size="lg" />
+              <div>
+                <p className="text-lg font-bold text-gray-900">{viewRequest.name}</p>
+                <p className="text-sm text-gray-500">{viewRequest.email}</p>
+                <div className="flex items-center gap-2 mt-1">
+                  <Badge color={statusColor[viewRequest.status]} dot size="sm">{viewRequest.status}</Badge>
+                  <Badge color="blue" size="sm">{viewRequest.mode}</Badge>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 rounded-xl bg-gray-50 p-4">
+              <div>
+                <p className="text-xs text-gray-400 uppercase font-semibold">Document Type</p>
+                <p className="text-sm font-medium text-gray-900 mt-0.5">{viewRequest.document}</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-400 uppercase font-semibold">Submitted On</p>
+                <p className="text-sm font-medium text-gray-900 mt-0.5">{new Date(viewRequest.submittedAt).toLocaleDateString()}</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-400 uppercase font-semibold">Requested Mode</p>
+                <p className="text-sm font-medium text-gray-900 mt-0.5">{viewRequest.mode}</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-400 uppercase font-semibold">Status</p>
+                <p className="text-sm font-medium text-gray-900 capitalize mt-0.5">{viewRequest.status}</p>
+              </div>
+            </div>
+
+            <div className="rounded-xl border-2 border-dashed border-gray-200 p-6 flex flex-col items-center justify-center gap-2 bg-gray-50">
+              <DocumentTextIcon className="h-10 w-10 text-gray-300" />
+              <p className="text-sm font-medium text-gray-600">{viewRequest.document}</p>
+              <p className="text-xs text-gray-400">Submitted by {viewRequest.name}</p>
+              <button className="mt-2 rounded-lg bg-indigo-50 px-4 py-1.5 text-xs font-medium text-indigo-600 hover:bg-indigo-100 transition-colors">
+                Download PDF
+              </button>
+            </div>
+
+            {viewRequest.status === 'pending' ? (
+              <div className="flex gap-2 pt-1">
+                <Button variant="success" className="flex-1" onClick={() => { handleAction(viewRequest.id, 'approved'); setViewRequest(null); }}>
+                  <CheckIcon className="h-4 w-4 mr-1" /> Approve
+                </Button>
+                <Button variant="danger" className="flex-1" onClick={() => { handleAction(viewRequest.id, 'rejected'); setViewRequest(null); }}>
+                  <XMarkIcon className="h-4 w-4 mr-1" /> Reject
+                </Button>
+              </div>
+            ) : (
+              <div className="flex justify-end">
+                <Button variant="secondary" onClick={() => setViewRequest(null)}>Close</Button>
+              </div>
+            )}
+          </div>
+        )}
+      </Modal>
     </div>
   );
 }

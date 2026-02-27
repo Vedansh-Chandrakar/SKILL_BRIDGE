@@ -7,8 +7,11 @@ import { STUDENT_MODES } from '@/models';
  * Toggle switch that lets a student flip between Freelancer & Recruiter modes.
  */
 export function ModeToggle() {
-  const { activeMode, toggleMode } = useRole();
+  const { activeMode, toggleMode, canToggle } = useRole();
   const isRecruiter = activeMode === STUDENT_MODES.RECRUITER;
+
+  // Only students who registered as 'both' see the toggle
+  if (!canToggle) return null;
 
   return (
     <div className="flex items-center gap-3">

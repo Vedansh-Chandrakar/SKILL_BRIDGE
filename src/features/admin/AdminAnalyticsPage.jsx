@@ -14,10 +14,10 @@ import {
 
 /* ── Mock Data ────────────────────────────────── */
 const STATS = [
-  { title: 'Total Revenue', value: '$128.4K', change: '+18.2%', changeType: 'positive', icon: CurrencyDollarIcon, color: 'emerald' },
-  { title: 'Active Users', value: '3,482', change: '+12.5%', changeType: 'positive', icon: UsersIcon, color: 'indigo' },
-  { title: 'Total Gigs', value: '1,298', change: '+8.1%', changeType: 'positive', icon: BriefcaseIcon, color: 'amber' },
-  { title: 'Campuses', value: '12', change: '+2', changeType: 'positive', icon: BuildingLibraryIcon, color: 'purple' },
+  { label: 'Total Revenue', value: '$128.4K', change: '+18.2%', changeType: 'positive', icon: CurrencyDollarIcon, iconColor: 'bg-emerald-100 text-emerald-600' },
+  { label: 'Active Users',  value: '3,482',   change: '+12.5%', changeType: 'positive', icon: UsersIcon,          iconColor: 'bg-indigo-100 text-indigo-600'  },
+  { label: 'Total Gigs',   value: '1,298',   change: '+8.1%',  changeType: 'positive', icon: BriefcaseIcon,      iconColor: 'bg-amber-100 text-amber-600'   },
+  { label: 'Campuses',     value: '12',      change: '+2',     changeType: 'positive', icon: BuildingLibraryIcon,iconColor: 'bg-purple-100 text-purple-600'  },
 ];
 
 const MONTHLY_DATA = [
@@ -143,8 +143,10 @@ export default function AdminAnalyticsPage() {
       <div className="grid gap-6 lg:grid-cols-5 mb-6">
         {/* Campus Performance Table */}
         <Card padding={false} className="lg:col-span-3">
-          <CardHeader title="Campus Performance" subtitle="Revenue and engagement by campus" />
-          <div className="overflow-x-auto">
+          <div className="px-5 pt-5">
+            <CardHeader title="Campus Performance" subtitle="Revenue and engagement by campus" />
+          </div>
+          <div className="overflow-x-auto mt-2">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-gray-100">

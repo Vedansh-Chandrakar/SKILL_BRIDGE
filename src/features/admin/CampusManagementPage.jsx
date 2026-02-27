@@ -3,7 +3,7 @@ import {
   PageHeader, Button, Badge, Avatar, SearchInput, Card, Modal, Input,
   Table, TableHead, TableHeader, TableBody, TableRow, TableCell,
 } from '@/components/shared';
-import { PlusIcon, PencilSquareIcon, TrashIcon, EyeIcon } from '@heroicons/react/24/outline';
+import { PlusIcon, PencilSquareIcon, TrashIcon, EyeIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
 const CAMPUSES = [
   { id: 'c-1', name: 'MIT', domain: 'mit.edu', students: 820, gigs: 145, status: 'active', joinedAt: '2025-01-15' },
@@ -13,15 +13,64 @@ const CAMPUSES = [
   { id: 'c-5', name: 'UC Berkeley', domain: 'berkeley.edu', students: 0, gigs: 0, status: 'inactive', joinedAt: '2025-08-15' },
 ];
 
-export default function CampusManagementPage() {
-  const [search, setSearch] = useState('');
-  const [showAddModal, setShowAddModal] = useState(false);
+const statusColor = { active: 'green', pending: 'yellow', inactive: 'gray' };
 
-  const filtered = CAMPUSES.filter((c) =>
+export default function CampusManagementPage() {
+  const [campuses, setCampuses] = useState(CAMPUSES);
+  const [search, setSearch] = useState('');
+
+  // Add modal
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [form, setForm] = useState({ name: '', domain: '', adminEmail: '' });
+
+  // View modal
+  const [viewCampus, setViewCampus] = useState(null);
+
+  // Edit modal
+  const [editCampus, setEditCampus] = useState(null);
+  const [editForm, setEditForm] = useState({});
+
+  // Delete confirm
+  const [deleteCampus, setDeleteCampus] = useState(null);
+
+  const filtered = campuses.filter((c) =>
     c.name.toLowerCase().includes(search.toLowerCase()),
   );
 
-  const statusColor = { active: 'green', pending: 'yellow', inactive: 'gray' };
+  /* ── Add ── */
+  const handleAdd = (e) => {
+    e.preventDefault();
+    setCampuses((prev) => [{
+      id: `c-${Date.now()}`,
+      name: form.name,
+      domain: form.domain,
+      students: 0,
+      gigs: 0,
+      status: 'pending',
+      joinedAt: new Date().toISOString().split('T')[0],
+    }, ...prev]);
+    setForm({ name: '', domain: '', adminEmail: '' });
+    setShowAddModal(false);
+  };
+
+  /* ── Edit ── */
+  const openEdit = (campus) => {
+    setEditCampus(campus);
+    setEditForm({ name: campus.name, domain: campus.domain, status: campus.status });
+  };
+  const handleEdit = (e) => {
+    e.preventDefault();
+    setCampuses((prev) =>
+      prev.map((c) => c.id === editCampus.id ? { ...c, ...editForm } : c),
+    );
+    setEditCampus(null);
+  };
+
+  /* ── Delete ── */
+  const handleDelete = () => {
+    setCampuses((prev) => prev.filter((c) => c.id !== deleteCampus.id));
+    setDeleteCampus(null);
+  };
 
   return (
     <div>
@@ -78,13 +127,25 @@ export default function CampusManagementPage() {
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex items-center justify-end gap-1">
-                    <button className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors" aria-label="View">
+                    <button
+                      onClick={() => setViewCampus(campus)}
+                      className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
+                      aria-label="View"
+                    >
                       <EyeIcon className="h-4 w-4" />
                     </button>
-                    <button className="rounded-lg p-1.5 text-gray-400 hover:bg-blue-50 hover:text-blue-600 transition-colors" aria-label="Edit">
+                    <button
+                      onClick={() => openEdit(campus)}
+                      className="rounded-lg p-1.5 text-gray-400 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                      aria-label="Edit"
+                    >
                       <PencilSquareIcon className="h-4 w-4" />
                     </button>
-                    <button className="rounded-lg p-1.5 text-gray-400 hover:bg-red-50 hover:text-red-600 transition-colors" aria-label="Delete">
+                    <button
+                      onClick={() => setDeleteCampus(campus)}
+                      className="rounded-lg p-1.5 text-gray-400 hover:bg-red-50 hover:text-red-600 transition-colors"
+                      aria-label="Delete"
+                    >
                       <TrashIcon className="h-4 w-4" />
                     </button>
                   </div>
@@ -95,17 +156,103 @@ export default function CampusManagementPage() {
         </Table>
       </Card>
 
-      {/* Add Campus Modal */}
+      {/* ── Add Campus Modal ── */}
       <Modal open={showAddModal} onClose={() => setShowAddModal(false)} title="Add New Campus">
-        <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); setShowAddModal(false); }}>
-          <Input label="Campus Name" placeholder="e.g. MIT" required />
-          <Input label="Domain" placeholder="e.g. mit.edu" required />
-          <Input label="Admin Email" type="email" placeholder="admin@mit.edu" required />
+        <form className="space-y-4" onSubmit={handleAdd}>
+          <Input label="Campus Name" placeholder="e.g. MIT" value={form.name}
+            onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} required />
+          <Input label="Domain" placeholder="e.g. mit.edu" value={form.domain}
+            onChange={(e) => setForm((f) => ({ ...f, domain: e.target.value }))} required />
+          <Input label="Admin Email" type="email" placeholder="admin@mit.edu" value={form.adminEmail}
+            onChange={(e) => setForm((f) => ({ ...f, adminEmail: e.target.value }))} required />
           <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
             <Button variant="secondary" type="button" onClick={() => setShowAddModal(false)}>Cancel</Button>
             <Button type="submit">Add Campus</Button>
           </div>
         </form>
+      </Modal>
+
+      {/* ── View Campus Modal ── */}
+      <Modal open={!!viewCampus} onClose={() => setViewCampus(null)} title="Campus Details">
+        {viewCampus && (
+          <div className="space-y-4">
+            <div className="flex items-center gap-4">
+              <Avatar name={viewCampus.name} size="lg" color="blue" />
+              <div>
+                <h3 className="text-lg font-bold text-gray-900">{viewCampus.name}</h3>
+                <p className="text-sm text-gray-500">{viewCampus.domain}</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { label: 'Students', value: viewCampus.students.toLocaleString() },
+                { label: 'Active Gigs', value: viewCampus.gigs },
+                { label: 'Status', value: <Badge color={statusColor[viewCampus.status]} dot>{viewCampus.status}</Badge> },
+                { label: 'Joined', value: new Date(viewCampus.joinedAt).toLocaleDateString() },
+              ].map(({ label, value }) => (
+                <div key={label} className="rounded-xl bg-gray-50 px-4 py-3">
+                  <p className="text-xs font-medium text-gray-400">{label}</p>
+                  <p className="mt-1 text-sm font-semibold text-gray-900">{value}</p>
+                </div>
+              ))}
+            </div>
+            <div className="flex justify-end pt-2">
+              <Button variant="secondary" onClick={() => setViewCampus(null)}>Close</Button>
+            </div>
+          </div>
+        )}
+      </Modal>
+
+      {/* ── Edit Campus Modal ── */}
+      <Modal open={!!editCampus} onClose={() => setEditCampus(null)} title="Edit Campus">
+        {editCampus && (
+          <form className="space-y-4" onSubmit={handleEdit}>
+            <Input label="Campus Name" value={editForm.name}
+              onChange={(e) => setEditForm((f) => ({ ...f, name: e.target.value }))} required />
+            <Input label="Domain" value={editForm.domain}
+              onChange={(e) => setEditForm((f) => ({ ...f, domain: e.target.value }))} required />
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+              <select
+                value={editForm.status}
+                onChange={(e) => setEditForm((f) => ({ ...f, status: e.target.value }))}
+                className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 transition-all"
+              >
+                <option value="active">Active</option>
+                <option value="pending">Pending</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+            <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
+              <Button variant="secondary" type="button" onClick={() => setEditCampus(null)}>Cancel</Button>
+              <Button type="submit">Save Changes</Button>
+            </div>
+          </form>
+        )}
+      </Modal>
+
+      {/* ── Delete Confirm Modal ── */}
+      <Modal open={!!deleteCampus} onClose={() => setDeleteCampus(null)} title="Delete Campus">
+        {deleteCampus && (
+          <div className="space-y-4">
+            <div className="flex items-start gap-3 rounded-xl bg-red-50 p-4">
+              <XMarkIcon className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
+              <p className="text-sm text-red-700">
+                Are you sure you want to delete <span className="font-semibold">{deleteCampus.name}</span>?
+                This action cannot be undone.
+              </p>
+            </div>
+            <div className="flex justify-end gap-3 pt-2">
+              <Button variant="secondary" onClick={() => setDeleteCampus(null)}>Cancel</Button>
+              <button
+                onClick={handleDelete}
+                className="rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 transition-colors"
+              >
+                Delete Campus
+              </button>
+            </div>
+          </div>
+        )}
       </Modal>
     </div>
   );

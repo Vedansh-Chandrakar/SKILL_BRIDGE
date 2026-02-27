@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  PageHeader, Card, CardHeader, Badge, Button, SearchInput, Select, EmptyState, Tabs,
+  PageHeader, Card, CardHeader, Badge, Button, SearchInput, EmptyState, Tabs,
 } from '@/components/shared';
 import {
   BriefcaseIcon,
@@ -13,6 +13,7 @@ import {
   FunnelIcon,
   Squares2X2Icon,
   ListBulletIcon,
+  XMarkIcon,
 } from '@heroicons/react/24/outline';
 import { BookmarkIcon as BookmarkSolid } from '@heroicons/react/24/solid';
 
@@ -48,12 +49,18 @@ export default function BrowseGigsPage() {
   const [showFilters, setShowFilters] = useState(false);
   const [budgetRange, setBudgetRange] = useState('all');
   const [campusFilter, setCampusFilter] = useState('all');
+  const [showSaved, setShowSaved] = useState(false);
+  const [myCampusOnly, setMyCampusOnly] = useState(false);
+
+  const MY_CAMPUS = 'MIT';
 
   const toggleSave = (id) => {
     setSavedGigs((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]);
   };
 
   let filtered = ALL_GIGS.filter((g) => {
+    if (showSaved) return savedGigs.includes(g.id);
+    if (myCampusOnly) return g.campus === MY_CAMPUS;
     const matchSearch = g.title.toLowerCase().includes(search.toLowerCase()) ||
       g.tags.some((t) => t.toLowerCase().includes(search.toLowerCase()));
     const matchCategory = activeCategory === 'all' || g.category === activeCategory;
@@ -76,6 +83,32 @@ export default function BrowseGigsPage() {
         subtitle="Find freelance opportunities across campuses."
         actions={
           <div className="flex items-center gap-2">
+            {/* My Campus toggle */}
+            <button
+              onClick={() => { setMyCampusOnly(!myCampusOnly); setShowSaved(false); }}
+              className={`flex items-center gap-1.5 rounded-xl border px-3 py-2 text-sm font-medium transition-all ${
+                myCampusOnly ? 'border-emerald-300 bg-emerald-50 text-emerald-700' : 'border-gray-200 text-gray-600 hover:bg-gray-50'
+              }`}
+            >
+              <MapPinIcon className={`h-4 w-4 ${myCampusOnly ? 'text-emerald-600' : ''}`} />
+              My Campus
+            </button>
+            {/* Saved Gigs button */}
+            <button
+              onClick={() => { setShowSaved(!showSaved); setMyCampusOnly(false); }}
+              className={`relative flex items-center gap-1.5 rounded-xl border px-3 py-2 text-sm font-medium transition-all ${
+                showSaved ? 'border-indigo-300 bg-indigo-50 text-indigo-600' : 'border-gray-200 text-gray-600 hover:bg-gray-50'
+              }`}
+            >
+              {showSaved ? <BookmarkSolid className="h-4 w-4 text-indigo-500" /> : <BookmarkIcon className="h-4 w-4" />}
+              Saved
+              {savedGigs.length > 0 && (
+                <span className={`flex h-4 min-w-[1rem] items-center justify-center rounded-full px-1 text-[10px] font-bold ${
+                  showSaved ? 'bg-indigo-600 text-white' : 'bg-indigo-100 text-indigo-600'
+                }`}>{savedGigs.length}</span>
+              )}
+            </button>
+            {/* View mode toggle */}
             <div className="flex rounded-xl border border-gray-200 overflow-hidden">
               <button
                 onClick={() => setViewMode('grid')}
@@ -94,7 +127,8 @@ export default function BrowseGigsPage() {
         }
       />
 
-      {/* Category Tabs */}
+      {/* Category Tabs — hidden in saved/my-campus view */}
+      {!showSaved && !myCampusOnly && (
       <div className="mb-6 flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
         {CATEGORIES.map((cat) => (
           <button
@@ -115,19 +149,51 @@ export default function BrowseGigsPage() {
           </button>
         ))}
       </div>
+      )}
+
+      {/* My Campus banner */}
+      {myCampusOnly && (
+        <div className="mb-4 flex items-center justify-between rounded-xl bg-emerald-50 border border-emerald-200 px-4 py-3">
+          <div className="flex items-center gap-2">
+            <MapPinIcon className="h-4 w-4 text-emerald-600" />
+            <span className="text-sm font-medium text-emerald-700">Showing gigs from <strong>{MY_CAMPUS}</strong> only</span>
+          </div>
+          <button onClick={() => setMyCampusOnly(false)} className="flex items-center gap-1 text-xs text-emerald-600 hover:text-emerald-800">
+            <XMarkIcon className="h-3.5 w-3.5" /> Show all campuses
+          </button>
+        </div>
+      )}
+
+      {/* Saved banner */}
+      {showSaved && (
+        <div className="mb-4 flex items-center justify-between rounded-xl bg-indigo-50 border border-indigo-200 px-4 py-3">
+          <div className="flex items-center gap-2">
+            <BookmarkSolid className="h-4 w-4 text-indigo-500" />
+            <span className="text-sm font-medium text-indigo-700">Showing {savedGigs.length} saved gig{savedGigs.length !== 1 ? 's' : ''}</span>
+          </div>
+          <button onClick={() => setShowSaved(false)} className="flex items-center gap-1 text-xs text-indigo-500 hover:text-indigo-700">
+            <XMarkIcon className="h-3.5 w-3.5" /> Back to all gigs
+          </button>
+        </div>
+      )}
 
       {/* Search & Filters */}
+      {!showSaved && !myCampusOnly && (
       <Card className="mb-6">
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="flex-1">
             <SearchInput value={search} onChange={setSearch} placeholder="Search gigs by title, skill, or keyword..." />
           </div>
           <div className="flex gap-2">
-            <Select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-600 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+            >
               <option value="newest">Newest First</option>
               <option value="budget-high">Budget: High to Low</option>
               <option value="budget-low">Budget: Low to High</option>
-            </Select>
+            </select>
             <button
               onClick={() => setShowFilters(!showFilters)}
               className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-sm font-medium transition-all ${
@@ -142,19 +208,33 @@ export default function BrowseGigsPage() {
         {/* Expanded filters */}
         {showFilters && (
           <div className="mt-4 pt-4 border-t border-gray-100 grid gap-3 sm:grid-cols-3">
-            <Select label="Budget Range" value={budgetRange} onChange={(e) => setBudgetRange(e.target.value)}>
-              <option value="all">Any Budget</option>
-              <option value="under100">Under $100</option>
-              <option value="100-200">$100 - $200</option>
-              <option value="200-500">$200 - $500</option>
-              <option value="over500">$500+</option>
-            </Select>
-            <Select label="Campus" value={campusFilter} onChange={(e) => setCampusFilter(e.target.value)}>
-              <option value="all">All Campuses</option>
-              <option value="MIT">MIT</option>
-              <option value="Stanford">Stanford</option>
-              <option value="Caltech">Caltech</option>
-            </Select>
+            <div>
+              <label className="mb-1 block text-xs font-medium text-gray-600">Budget Range</label>
+              <select
+                value={budgetRange}
+                onChange={(e) => setBudgetRange(e.target.value)}
+                className="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-600 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+              >
+                <option value="all">Any Budget</option>
+                <option value="under100">Under $100</option>
+                <option value="100-200">$100 - $200</option>
+                <option value="200-500">$200 - $500</option>
+                <option value="over500">$500+</option>
+              </select>
+            </div>
+            <div>
+              <label className="mb-1 block text-xs font-medium text-gray-600">Campus</label>
+              <select
+                value={campusFilter}
+                onChange={(e) => setCampusFilter(e.target.value)}
+                className="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-600 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+              >
+                <option value="all">All Campuses</option>
+                <option value="MIT">MIT</option>
+                <option value="Stanford">Stanford</option>
+                <option value="Caltech">Caltech</option>
+              </select>
+            </div>
             <div className="flex items-end">
               <Button variant="ghost" size="sm" onClick={() => { setBudgetRange('all'); setCampusFilter('all'); setSearch(''); setActiveCategory('all'); }}>
                 Clear All Filters
@@ -163,18 +243,23 @@ export default function BrowseGigsPage() {
           </div>
         )}
       </Card>
+      )}
 
-      <p className="text-sm text-gray-500 mb-4">{filtered.length} gigs found</p>
+      <p className="text-sm text-gray-500 mb-4">{filtered.length} gig{filtered.length !== 1 ? 's' : ''} found</p>
 
       {filtered.length === 0 ? (
         <EmptyState
-          icon={BriefcaseIcon}
-          title="No gigs found"
-          description="Try adjusting your search or filters."
+          icon={myCampusOnly ? MapPinIcon : BookmarkIcon}
+          title={showSaved ? 'No saved gigs' : myCampusOnly ? `No gigs at ${MY_CAMPUS}` : 'No gigs found'}
+          description={showSaved ? 'Bookmark gigs you like to view them here.' : myCampusOnly ? 'There are no open gigs posted from your campus right now.' : 'Try adjusting your search or filters.'}
           action={
-            <Button variant="secondary" onClick={() => { setSearch(''); setActiveCategory('all'); setBudgetRange('all'); setCampusFilter('all'); }}>
-              Clear Filters
-            </Button>
+            showSaved ? (
+              <Button variant="secondary" onClick={() => setShowSaved(false)}>Browse All Gigs</Button>
+            ) : myCampusOnly ? (
+              <Button variant="secondary" onClick={() => setMyCampusOnly(false)}>Browse All Campuses</Button>
+            ) : (
+              <Button variant="secondary" onClick={() => { setSearch(''); setActiveCategory('all'); setBudgetRange('all'); setCampusFilter('all'); }}>Clear Filters</Button>
+            )
           }
         />
       ) : viewMode === 'grid' ? (

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { PageHeader, Card, CardHeader, Button, Input, Textarea, Select } from '@/components/shared';
+import { PageHeader, Card, CardHeader, Button, Input, Textarea } from '@/components/shared';
 import { PlusIcon, SparklesIcon } from '@heroicons/react/24/outline';
 
 export default function PostGigPage() {
@@ -59,23 +59,28 @@ export default function PostGigPage() {
           />
 
           {/* Category */}
-          <Select
-            label="Category"
-            name="category"
-            value={form.category}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Select a category</option>
-            <option>Web Development</option>
-            <option>Mobile Development</option>
-            <option>Design & Creative</option>
-            <option>Data & Analytics</option>
-            <option>Writing & Content</option>
-            <option>Tutoring & Education</option>
-            <option>Video & Animation</option>
-            <option>Other</option>
-          </Select>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Category <span className="text-red-500">*</span>
+            </label>
+            <select
+              name="category"
+              value={form.category}
+              onChange={handleChange}
+              required
+              className="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-600 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+            >
+              <option value="">Select a category</option>
+              <option>Web Development</option>
+              <option>Mobile Development</option>
+              <option>Design &amp; Creative</option>
+              <option>Data &amp; Analytics</option>
+              <option>Writing &amp; Content</option>
+              <option>Tutoring &amp; Education</option>
+              <option>Video &amp; Animation</option>
+              <option>Other</option>
+            </select>
+          </div>
 
           {/* Budget & Deadline */}
           <div className="grid gap-4 sm:grid-cols-2">

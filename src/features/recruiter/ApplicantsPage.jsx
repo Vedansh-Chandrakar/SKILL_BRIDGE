@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {
-  PageHeader, Card, CardHeader, Badge, Avatar, Button, Modal, SearchInput, Select,
+  PageHeader, Card, Badge, Avatar, Button, Modal, SearchInput,
   Table, TableHead, TableHeader, TableBody, TableRow, TableCell,
 } from '@/components/shared';
 import {
@@ -37,7 +37,13 @@ export default function ApplicantsPage() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [previewApplicant, setPreviewApplicant] = useState(null);
+  const [msgApplicant, setMsgApplicant] = useState(null);
+  const [msgText, setMsgText] = useState('');
+  const [msgSent, setMsgSent] = useState(false);
   const [applicants, setApplicants] = useState(APPLICANTS);
+
+  const openMsg = (a) => { setMsgApplicant(a); setMsgText(''); setMsgSent(false); };
+  const sendMsg = () => { if (msgText.trim()) setMsgSent(true); };
 
   const pending = applicants.filter((a) => a.status === 'pending').length;
 
@@ -84,12 +90,16 @@ export default function ApplicantsPage() {
           <div className="flex-1">
             <SearchInput value={search} onChange={setSearch} placeholder="Search by name or gig..." />
           </div>
-          <Select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="rounded-xl border border-gray-200 bg-gray-50 px-3.5 py-2.5 text-sm text-gray-700 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+          >
             <option value="all">All Status</option>
             <option value="pending">Pending</option>
             <option value="accepted">Accepted</option>
             <option value="rejected">Rejected</option>
-          </Select>
+          </select>
         </div>
       </Card>
 
@@ -138,7 +148,7 @@ export default function ApplicantsPage() {
                         </button>
                       </>
                     )}
-                    <button className="rounded-lg p-1.5 text-gray-400 hover:bg-blue-50 hover:text-blue-600 transition-colors" title="Message">
+                    <button onClick={() => openMsg(a)} className="rounded-lg p-1.5 text-gray-400 hover:bg-blue-50 hover:text-blue-600 transition-colors" title="Message">
                       <ChatBubbleLeftRightIcon className="h-4 w-4" />
                     </button>
                     <button onClick={() => setPreviewApplicant(a)} className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors" title="View profile">
@@ -151,6 +161,50 @@ export default function ApplicantsPage() {
           </TableBody>
         </Table>
       </Card>
+
+      {/* ── Message Modal ── */}
+      <Modal open={!!msgApplicant} onClose={() => setMsgApplicant(null)} title="Send Message" size="sm">
+        {msgApplicant && (
+          <div className="space-y-4">
+            {msgSent ? (
+              <div className="flex flex-col items-center gap-3 py-4 text-center">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100">
+                  <CheckIcon className="h-6 w-6 text-emerald-600" />
+                </div>
+                <p className="font-semibold text-gray-900">Message Sent!</p>
+                <p className="text-sm text-gray-500">Your message was sent to <strong>{msgApplicant.name}</strong>.</p>
+                <Button variant="secondary" onClick={() => setMsgApplicant(null)}>Close</Button>
+              </div>
+            ) : (
+              <>
+                <div className="flex items-center gap-3 rounded-xl bg-gray-50 p-3">
+                  <Avatar name={msgApplicant.name} size="sm" />
+                  <div>
+                    <p className="font-semibold text-gray-900 text-sm">{msgApplicant.name}</p>
+                    <p className="text-xs text-gray-400">{msgApplicant.email}</p>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Message</label>
+                  <textarea
+                    rows={4}
+                    className="w-full rounded-xl border border-gray-200 bg-gray-50 px-3.5 py-2.5 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 resize-none"
+                    placeholder={`Write a message to ${msgApplicant.name}...`}
+                    value={msgText}
+                    onChange={(e) => setMsgText(e.target.value)}
+                  />
+                </div>
+                <div className="flex gap-3">
+                  <Button variant="primary" className="flex-1" onClick={sendMsg} disabled={!msgText.trim()}>
+                    <ChatBubbleLeftRightIcon className="h-4 w-4 mr-2" /> Send
+                  </Button>
+                  <Button variant="secondary" className="flex-1" onClick={() => setMsgApplicant(null)}>Cancel</Button>
+                </div>
+              </>
+            )}
+          </div>
+        )}
+      </Modal>
 
       {/* ── Candidate Profile Preview Modal ── */}
       <Modal open={!!previewApplicant} onClose={() => setPreviewApplicant(null)} title="Candidate Profile" size="lg">

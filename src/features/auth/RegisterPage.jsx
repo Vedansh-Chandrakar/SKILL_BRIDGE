@@ -59,7 +59,10 @@ export default function RegisterPage() {
     setLoading(true);
     await new Promise((r) => setTimeout(r, 1000));
 
-    login(form.role === 'campus' ? 'campus' : 'student');
+    login(
+      form.role === 'campus' ? 'campus' : 'student',
+      form.role === 'student' ? form.studentMode : undefined,
+    );
     navigate(form.role === 'campus' ? '/campus' : '/student');
   };
 

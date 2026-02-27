@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   PageHeader, StatCard, Card, CardHeader, Badge, Avatar, Button,
   Table, TableHead, TableHeader, TableBody, TableRow, TableCell,
@@ -15,10 +15,10 @@ import {
 } from '@heroicons/react/24/outline';
 
 const stats = [
-  { label: 'Total Students', value: '820', change: '+45 this month', icon: AcademicCapIcon, color: 'indigo' },
-  { label: 'Active Gigs', value: '34', change: '+8 this week', icon: BriefcaseIcon, color: 'emerald' },
-  { label: 'Placements', value: '112', change: '+12 this month', icon: ChartBarIcon, color: 'amber' },
-  { label: 'Pending Verifications', value: '6', change: '3 urgent', icon: ClockIcon, color: 'rose' },
+  { label: 'Total Students', value: '820', change: '+45 this month', icon: AcademicCapIcon, iconColor: 'bg-indigo-100 text-indigo-600' },
+  { label: 'Active Gigs', value: '34', change: '+8 this week', icon: BriefcaseIcon, iconColor: 'bg-emerald-100 text-emerald-600' },
+  { label: 'Placements', value: '112', change: '+12 this month', icon: ChartBarIcon, iconColor: 'bg-amber-100 text-amber-600' },
+  { label: 'Pending Verifications', value: '6', change: '3 urgent', icon: ClockIcon, iconColor: 'bg-rose-100 text-rose-600' },
 ];
 
 const recentStudents = [
@@ -40,13 +40,14 @@ const modeColor = { Freelancer: 'blue', Recruiter: 'purple', Both: 'cyan' };
 const gigStatusColor = { open: 'green', 'in-progress': 'yellow', completed: 'indigo' };
 
 export default function CampusDashboard() {
+  const navigate = useNavigate();
   return (
     <div>
       <PageHeader
         title="Campus Dashboard"
         subtitle="Manage students, gigs, and recruitment for your institution."
         actions={
-          <Button variant="gradient">
+          <Button variant="gradient" onClick={() => navigate('/campus/verifications')}>
             <CheckBadgeIcon className="h-4 w-4 mr-2" />
             Verify Students
           </Button>
@@ -54,26 +55,65 @@ export default function CampusDashboard() {
       />
 
       {/* Stats */}
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4 mb-8">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4 mb-4">
         {stats.map((s) => (
           <StatCard
             key={s.label}
-            title={s.label}
+            label={s.label}
             value={s.value}
             change={s.change}
             icon={s.icon}
-            color={s.color}
+            iconColor={s.iconColor}
           />
         ))}
+      </div>
+
+      {/* Quick Metrics */}
+      <div className="grid gap-4 sm:grid-cols-3 mb-8">
+        <Card>
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-100">
+              <ArrowTrendingUpIcon className="h-5 w-5 text-indigo-600" />
+            </div>
+            <div>
+              <p className="text-xs text-gray-500">Avg. Gig Completion</p>
+              <p className="text-lg font-bold text-gray-900">4.2 days</p>
+            </div>
+          </div>
+        </Card>
+        <Card>
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100">
+              <UserGroupIcon className="h-5 w-5 text-emerald-600" />
+            </div>
+            <div>
+              <p className="text-xs text-gray-500">Active Freelancers</p>
+              <p className="text-lg font-bold text-gray-900">284</p>
+            </div>
+          </div>
+        </Card>
+        <Card>
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-100">
+              <BriefcaseIcon className="h-5 w-5 text-amber-600" />
+            </div>
+            <div>
+              <p className="text-xs text-gray-500">Open Positions</p>
+              <p className="text-lg font-bold text-gray-900">18</p>
+            </div>
+          </div>
+        </Card>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Recent Students */}
         <Card padding={false}>
-          <CardHeader
-            title="Recent Students"
-            action={<Button variant="ghost" size="sm">View all</Button>}
-          />
+          <div className="px-5 pt-5 pb-3">
+            <CardHeader
+              title="Recent Students"
+              action={<Button variant="ghost" size="sm" onClick={() => navigate('/campus/students')}>View all</Button>}
+            />
+          </div>
           <Table>
             <TableHead>
               <TableHeader>Student</TableHeader>
@@ -108,10 +148,12 @@ export default function CampusDashboard() {
 
         {/* Recent Gigs */}
         <Card padding={false}>
-          <CardHeader
-            title="Recent Gigs"
-            action={<Button variant="ghost" size="sm">View all</Button>}
-          />
+          <div className="px-5 pt-5 pb-3">
+            <CardHeader
+              title="Recent Gigs"
+              action={<Button variant="ghost" size="sm" onClick={() => navigate('/campus/gigs')}>View all</Button>}
+            />
+          </div>
           <Table>
             <TableHead>
               <TableHeader>Gig</TableHeader>
@@ -135,43 +177,6 @@ export default function CampusDashboard() {
               ))}
             </TableBody>
           </Table>
-        </Card>
-      </div>
-
-      {/* Quick Metrics */}
-      <div className="mt-6 grid gap-4 sm:grid-cols-3">
-        <Card>
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-100">
-              <ArrowTrendingUpIcon className="h-5 w-5 text-indigo-600" />
-            </div>
-            <div>
-              <p className="text-xs text-gray-500">Avg. Gig Completion</p>
-              <p className="text-lg font-bold text-gray-900">4.2 days</p>
-            </div>
-          </div>
-        </Card>
-        <Card>
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100">
-              <UserGroupIcon className="h-5 w-5 text-emerald-600" />
-            </div>
-            <div>
-              <p className="text-xs text-gray-500">Active Freelancers</p>
-              <p className="text-lg font-bold text-gray-900">284</p>
-            </div>
-          </div>
-        </Card>
-        <Card>
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-100">
-              <BriefcaseIcon className="h-5 w-5 text-amber-600" />
-            </div>
-            <div>
-              <p className="text-xs text-gray-500">Open Positions</p>
-              <p className="text-lg font-bold text-gray-900">18</p>
-            </div>
-          </div>
         </Card>
       </div>
     </div>

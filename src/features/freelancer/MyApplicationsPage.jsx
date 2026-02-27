@@ -1,41 +1,98 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  PageHeader, Card, Badge, Button, EmptyState, Modal, SearchInput, Select,
+  PageHeader, Card, Badge, Button, EmptyState, Modal, SearchInput,
   Table, TableHead, TableHeader, TableBody, TableRow, TableCell,
 } from '@/components/shared';
 import {
   DocumentCheckIcon, EyeIcon, XMarkIcon, ClockIcon,
   CheckCircleIcon, XCircleIcon, ChatBubbleLeftRightIcon,
-  ArrowPathIcon, ChevronRightIcon, FunnelIcon,
+  ArrowPathIcon, CurrencyDollarIcon, CalendarDaysIcon,
+  BriefcaseIcon, UserCircleIcon, DocumentTextIcon,
+  SparklesIcon, ExclamationCircleIcon,
 } from '@heroicons/react/24/outline';
 
 const APPLICATIONS = [
-  { id: 'a-1', gigTitle: 'Build a Portfolio Website', campus: 'MIT', status: 'pending', proposedBudget: 140, recruiter: 'Sarah K.', appliedAt: '2026-02-21', gigId: 'g-10', timeline: [
-    { stage: 'Applied', date: 'Feb 21', done: true },
-    { stage: 'Under Review', date: '', done: false },
-    { stage: 'Decision', date: '', done: false },
-  ] },
-  { id: 'a-2', gigTitle: 'Data Analysis for Research', campus: 'Stanford', status: 'accepted', proposedBudget: 190, recruiter: 'Dr. Kim', appliedAt: '2026-02-15', gigId: 'g-14', timeline: [
-    { stage: 'Applied', date: 'Feb 15', done: true },
-    { stage: 'Under Review', date: 'Feb 17', done: true },
-    { stage: 'Shortlisted', date: 'Feb 19', done: true },
-    { stage: 'Accepted', date: 'Feb 20', done: true },
-  ] },
-  { id: 'a-3', gigTitle: 'Logo Design for Club', campus: 'MIT', status: 'rejected', proposedBudget: 70, recruiter: 'Alex R.', appliedAt: '2026-02-10', gigId: 'g-13', timeline: [
-    { stage: 'Applied', date: 'Feb 10', done: true },
-    { stage: 'Under Review', date: 'Feb 12', done: true },
-    { stage: 'Rejected', date: 'Feb 14', done: true },
-  ] },
-  { id: 'a-4', gigTitle: 'Mobile App UI Mockups', campus: 'Caltech', status: 'pending', proposedBudget: 115, recruiter: 'Eva M.', appliedAt: '2026-02-22', gigId: 'g-15', timeline: [
-    { stage: 'Applied', date: 'Feb 22', done: true },
-    { stage: 'Under Review', date: 'Feb 24', done: true },
-    { stage: 'Decision', date: '', done: false },
-  ] },
-  { id: 'a-5', gigTitle: 'Python Script Automation', campus: 'Stanford', status: 'withdrawn', proposedBudget: 80, recruiter: 'Li W.', appliedAt: '2026-02-05', gigId: 'g-11', timeline: [
-    { stage: 'Applied', date: 'Feb 5', done: true },
-    { stage: 'Withdrawn', date: 'Feb 8', done: true },
-  ] },
+  {
+    id: 'a-1', gigTitle: 'Build a Portfolio Website', campus: 'MIT', status: 'pending',
+    proposedBudget: 140, recruiter: 'Sarah K.', appliedAt: '2026-02-21', gigId: 'g-10',
+    proposal: {
+      coverLetter: "Hi Sarah, I'm a frontend developer with 2 years of React experience and have built several portfolio sites for students. I'd love to bring that expertise to your project — clean design, responsive layout, and delivered on time.",
+      proposedTimeline: '5 days',
+      availability: 'Full-time (40 hrs/week)',
+      relevantSkills: ['React', 'Tailwind CSS', 'Responsive Design', 'SEO Basics'],
+      attachedSamples: ['portfolio_sample_1.pdf', 'previous_work_link.txt'],
+    },
+    timeline: [
+      { stage: 'Applied', date: 'Feb 21', done: true, note: 'Application submitted successfully.' },
+      { stage: 'Under Review', date: '', done: false, note: 'Recruiter is reviewing proposals.' },
+      { stage: 'Decision', date: '', done: false, note: 'Final selection will be made here.' },
+    ],
+  },
+  {
+    id: 'a-2', gigTitle: 'Data Analysis for Research', campus: 'Stanford', status: 'accepted',
+    proposedBudget: 190, recruiter: 'Dr. Kim', appliedAt: '2026-02-15', gigId: 'g-14',
+    proposal: {
+      coverLetter: "Dr. Kim, I have hands-on experience with Python (pandas, matplotlib) and statistical analysis. I completed a similar project for a biology department last semester. I can deliver clean, well-commented code and a comprehensive report within your timeline.",
+      proposedTimeline: '7 days',
+      availability: 'Part-time (20 hrs/week)',
+      relevantSkills: ['Python', 'Pandas', 'Matplotlib', 'Statistical Analysis', 'Jupyter'],
+      attachedSamples: ['data_sample_analysis.ipynb'],
+    },
+    timeline: [
+      { stage: 'Applied', date: 'Feb 15', done: true, note: 'Application submitted.' },
+      { stage: 'Under Review', date: 'Feb 17', done: true, note: 'Recruiter reviewed your proposal.' },
+      { stage: 'Shortlisted', date: 'Feb 19', done: true, note: 'You were shortlisted among top candidates.' },
+      { stage: 'Accepted', date: 'Feb 20', done: true, note: 'Congratulations! Your application was accepted.' },
+    ],
+  },
+  {
+    id: 'a-3', gigTitle: 'Logo Design for Club', campus: 'MIT', status: 'rejected',
+    proposedBudget: 70, recruiter: 'Alex R.', appliedAt: '2026-02-10', gigId: 'g-13',
+    proposal: {
+      coverLetter: "Alex, I'm a graphic designer with experience in brand identity. I'll deliver 3 unique logo concepts with full color and monochrome variants. My style is modern and minimal — great fit for a student club brand.",
+      proposedTimeline: '3 days',
+      availability: 'Flexible (15 hrs/week)',
+      relevantSkills: ['Figma', 'Adobe Illustrator', 'Brand Identity', 'Typography'],
+      attachedSamples: ['logo_portfolio.pdf'],
+    },
+    timeline: [
+      { stage: 'Applied', date: 'Feb 10', done: true, note: 'Application submitted.' },
+      { stage: 'Under Review', date: 'Feb 12', done: true, note: 'Recruiter reviewed your proposal.' },
+      { stage: 'Rejected', date: 'Feb 14', done: true, note: 'Another candidate was selected for this gig.' },
+    ],
+  },
+  {
+    id: 'a-4', gigTitle: 'Mobile App UI Mockups', campus: 'Caltech', status: 'pending',
+    proposedBudget: 115, recruiter: 'Eva M.', appliedAt: '2026-02-22', gigId: 'g-15',
+    proposal: {
+      coverLetter: "Eva, I specialize in mobile UI/UX and have delivered mockup sets for 4 startup projects. I work in Figma with auto-layout and a reusable component system so handoff to developers is seamless.",
+      proposedTimeline: '4 days',
+      availability: 'Part-time (25 hrs/week)',
+      relevantSkills: ['Figma', 'Mobile UI', 'Design Systems', 'Prototyping'],
+      attachedSamples: ['mobile_ui_samples.fig', 'case_study.pdf'],
+    },
+    timeline: [
+      { stage: 'Applied', date: 'Feb 22', done: true, note: 'Application submitted.' },
+      { stage: 'Under Review', date: 'Feb 24', done: true, note: 'Recruiter is reviewing your proposal.' },
+      { stage: 'Decision', date: '', done: false, note: 'Decision expected soon.' },
+    ],
+  },
+  {
+    id: 'a-5', gigTitle: 'Python Script Automation', campus: 'Stanford', status: 'withdrawn',
+    proposedBudget: 80, recruiter: 'Li W.', appliedAt: '2026-02-05', gigId: 'g-11',
+    proposal: {
+      coverLetter: "Li, I have strong Python automation skills (shell, APIs, file processing). I've written automation scripts saving 10+ hours/week for an academic lab. Happy to scope this further.",
+      proposedTimeline: '2 days',
+      availability: 'Full-time (40 hrs/week)',
+      relevantSkills: ['Python', 'Shell Scripting', 'API Integration', 'Automation'],
+      attachedSamples: [],
+    },
+    timeline: [
+      { stage: 'Applied', date: 'Feb 5', done: true, note: 'Application submitted.' },
+      { stage: 'Withdrawn', date: 'Feb 8', done: true, note: 'You withdrew this application.' },
+    ],
+  },
 ];
 
 const statusColor = { pending: 'yellow', accepted: 'green', rejected: 'red', withdrawn: 'gray' };
@@ -46,12 +103,46 @@ const statusIcon = {
   withdrawn: ArrowPathIcon,
 };
 
+const STATUS_BANNERS = {
+  pending: {
+    bg: 'bg-amber-50 border-amber-200',
+    icon: ClockIcon,
+    iconColor: 'text-amber-500',
+    title: 'Awaiting Recruiter Review',
+    desc: 'Your application has been received. The recruiter will review proposals and reach out soon.',
+  },
+  accepted: {
+    bg: 'bg-emerald-50 border-emerald-200',
+    icon: CheckCircleIcon,
+    iconColor: 'text-emerald-500',
+    title: 'Application Accepted!',
+    desc: 'Congratulations! The recruiter selected you. Head to chat to coordinate next steps.',
+  },
+  rejected: {
+    bg: 'bg-red-50 border-red-200',
+    icon: XCircleIcon,
+    iconColor: 'text-red-400',
+    title: 'Not Selected This Time',
+    desc: 'The recruiter went with another candidate. Your skills are great — keep applying!',
+  },
+  withdrawn: {
+    bg: 'bg-gray-50 border-gray-200',
+    icon: ArrowPathIcon,
+    iconColor: 'text-gray-400',
+    title: 'Application Withdrawn',
+    desc: 'You withdrew this application. You can browse other gigs and apply again anytime.',
+  },
+};
+
 export default function MyApplicationsPage() {
   const [apps, setApps] = useState(APPLICATIONS);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedApp, setSelectedApp] = useState(null);
   const [withdrawApp, setWithdrawApp] = useState(null);
+  const [modalTab, setModalTab] = useState('status');
+
+  const openModal = (app) => { setSelectedApp(app); setModalTab('status'); };
 
   const pending = apps.filter((a) => a.status === 'pending').length;
   const accepted = apps.filter((a) => a.status === 'accepted').length;
@@ -102,13 +193,17 @@ export default function MyApplicationsPage() {
           <div className="flex-1">
             <SearchInput value={search} onChange={setSearch} placeholder="Search by gig title..." />
           </div>
-          <Select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-600 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+          >
             <option value="all">All Status</option>
             <option value="pending">Pending</option>
             <option value="accepted">Accepted</option>
             <option value="rejected">Rejected</option>
             <option value="withdrawn">Withdrawn</option>
-          </Select>
+          </select>
         </div>
       </Card>
 
@@ -133,7 +228,7 @@ export default function MyApplicationsPage() {
               {filtered.map((app) => {
                 const StatusI = statusIcon[app.status];
                 return (
-                  <TableRow key={app.id} className="cursor-pointer hover:bg-indigo-50/30" onClick={() => setSelectedApp(app)}>
+                  <TableRow key={app.id} className="cursor-pointer hover:bg-indigo-50/30" onClick={() => openModal(app)}>
                     <TableCell>
                       <div>
                         <p className="font-semibold text-gray-900">{app.gigTitle}</p>
@@ -166,6 +261,9 @@ export default function MyApplicationsPage() {
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-1" onClick={(e) => e.stopPropagation()}>
+                        <button onClick={() => openModal(app)} className="rounded-lg p-1.5 text-gray-400 hover:bg-indigo-50 hover:text-indigo-600 transition-colors" title="View details">
+                          <DocumentTextIcon className="h-4 w-4" />
+                        </button>
                         <Link to={`/student/gigs/${app.gigId}`} className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors" title="View gig">
                           <EyeIcon className="h-4 w-4" />
                         </Link>
@@ -184,76 +282,210 @@ export default function MyApplicationsPage() {
         </Card>
       )}
 
-      {/* ── Application Detail + Timeline Modal ── */}
-      <Modal open={!!selectedApp} onClose={() => setSelectedApp(null)} title="Application Details" size="md">
-        {selectedApp && (
-          <div className="space-y-6">
+      {/* ── Application Detail Modal ── */}
+      <Modal open={!!selectedApp} onClose={() => setSelectedApp(null)} title="Application Details" size="lg">
+        {selectedApp && (() => {
+          const banner = STATUS_BANNERS[selectedApp.status];
+          const BannerIcon = banner.icon;
+          return (
             <div>
-              <h3 className="text-lg font-bold text-gray-900">{selectedApp.gigTitle}</h3>
-              <p className="text-sm text-gray-500 mt-1">by {selectedApp.recruiter} • {selectedApp.campus}</p>
-              <div className="flex items-center gap-3 mt-3">
-                <Badge color={statusColor[selectedApp.status]} size="lg">{selectedApp.status}</Badge>
-                <span className="text-sm text-emerald-600 font-semibold">${selectedApp.proposedBudget} proposed</span>
+              {/* Header */}
+              <div className="mb-4">
+                <h3 className="text-lg font-bold text-gray-900">{selectedApp.gigTitle}</h3>
+                <div className="flex flex-wrap items-center gap-3 mt-2">
+                  <Badge color="blue" size="sm">{selectedApp.campus}</Badge>
+                  <Badge color={statusColor[selectedApp.status]} dot>{selectedApp.status}</Badge>
+                  <span className="text-xs text-gray-400">Applied {selectedApp.appliedAt}</span>
+                </div>
               </div>
-            </div>
 
-            {/* Visual Timeline */}
-            <div>
-              <h4 className="text-sm font-semibold text-gray-700 mb-4">Application Timeline</h4>
-              <div className="relative">
-                {selectedApp.timeline.map((step, i) => {
-                  const isLast = i === selectedApp.timeline.length - 1;
-                  const isRejected = selectedApp.status === 'rejected' && isLast;
-                  return (
-                    <div key={i} className="flex items-start gap-3 mb-0">
-                      <div className="flex flex-col items-center">
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
-                          step.done
-                            ? isRejected ? 'bg-red-100 text-red-600' : 'bg-emerald-100 text-emerald-600'
-                            : 'bg-gray-100 text-gray-400'
-                        }`}>
-                          {step.done ? (
-                            isRejected ? <XCircleIcon className="h-4 w-4" /> : <CheckCircleIcon className="h-4 w-4" />
-                          ) : (
-                            <ClockIcon className="h-4 w-4" />
-                          )}
-                        </div>
-                        {!isLast && (
-                          <div className={`w-0.5 h-8 ${step.done ? isRejected ? 'bg-red-200' : 'bg-emerald-200' : 'bg-gray-200'}`} />
-                        )}
-                      </div>
-                      <div className="pb-6">
-                        <p className={`text-sm font-medium ${step.done ? 'text-gray-900' : 'text-gray-400'}`}>{step.stage}</p>
-                        {step.date && <p className="text-xs text-gray-400">{step.date}</p>}
+              {/* Tabs */}
+              <div className="flex border-b border-gray-100 mb-5">
+                {[
+                  { key: 'status', label: 'Status & Timeline', icon: ClockIcon },
+                  { key: 'application', label: 'My Application', icon: DocumentTextIcon },
+                ].map(({ key, label, icon: Icon }) => (
+                  <button
+                    key={key}
+                    onClick={() => setModalTab(key)}
+                    className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+                      modalTab === key
+                        ? 'border-indigo-500 text-indigo-600'
+                        : 'border-transparent text-gray-500 hover:text-gray-700'
+                    }`}
+                  >
+                    <Icon className="h-4 w-4" />
+                    {label}
+                  </button>
+                ))}
+              </div>
+
+              {/* ── STATUS TAB ── */}
+              {modalTab === 'status' && (
+                <div className="space-y-5">
+                  {/* Status Banner */}
+                  <div className={`rounded-xl border p-4 flex items-start gap-3 ${banner.bg}`}>
+                    <BannerIcon className={`h-6 w-6 shrink-0 mt-0.5 ${banner.iconColor}`} />
+                    <div>
+                      <p className="text-sm font-semibold text-gray-900">{banner.title}</p>
+                      <p className="text-sm text-gray-600 mt-0.5">{banner.desc}</p>
+                    </div>
+                  </div>
+
+                  {/* Quick Stats */}
+                  <div className="grid grid-cols-3 gap-3">
+                    <div className="rounded-xl bg-gray-50 p-3 text-center">
+                      <CurrencyDollarIcon className="h-5 w-5 mx-auto text-emerald-500 mb-1" />
+                      <p className="text-base font-bold text-gray-900">${selectedApp.proposedBudget}</p>
+                      <p className="text-xs text-gray-500">Your Bid</p>
+                    </div>
+                    <div className="rounded-xl bg-gray-50 p-3 text-center">
+                      <CalendarDaysIcon className="h-5 w-5 mx-auto text-indigo-500 mb-1" />
+                      <p className="text-base font-bold text-gray-900">{selectedApp.proposal.proposedTimeline}</p>
+                      <p className="text-xs text-gray-500">Timeline</p>
+                    </div>
+                    <div className="rounded-xl bg-gray-50 p-3 text-center">
+                      <UserCircleIcon className="h-5 w-5 mx-auto text-purple-500 mb-1" />
+                      <p className="text-base font-bold text-gray-900 truncate">{selectedApp.recruiter}</p>
+                      <p className="text-xs text-gray-500">Recruiter</p>
+                    </div>
+                  </div>
+
+                  {/* Timeline */}
+                  <div>
+                    <h4 className="text-sm font-semibold text-gray-700 mb-4">Application Timeline</h4>
+                    <div className="relative">
+                      {selectedApp.timeline.map((step, i) => {
+                        const isLast = i === selectedApp.timeline.length - 1;
+                        const isRejected = selectedApp.status === 'rejected' && isLast;
+                        const isWithdrawn = selectedApp.status === 'withdrawn' && isLast;
+                        const isCurrent = !step.done && i === selectedApp.timeline.findIndex((s) => !s.done);
+                        const dotColor = step.done
+                          ? isRejected || isWithdrawn ? 'bg-red-100 text-red-500' : 'bg-emerald-100 text-emerald-600'
+                          : isCurrent ? 'bg-indigo-100 text-indigo-500 ring-2 ring-indigo-300' : 'bg-gray-100 text-gray-400';
+                        const lineColor = step.done
+                          ? isRejected || isWithdrawn ? 'bg-red-200' : 'bg-emerald-200'
+                          : 'bg-gray-100';
+                        return (
+                          <div key={i} className="flex items-start gap-3">
+                            <div className="flex flex-col items-center">
+                              <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${dotColor}`}>
+                                {step.done ? (
+                                  isRejected || isWithdrawn
+                                    ? <XCircleIcon className="h-4 w-4" />
+                                    : <CheckCircleIcon className="h-4 w-4" />
+                                ) : isCurrent ? (
+                                  <SparklesIcon className="h-4 w-4" />
+                                ) : (
+                                  <ClockIcon className="h-4 w-4" />
+                                )}
+                              </div>
+                              {!isLast && <div className={`w-0.5 h-10 ${lineColor}`} />}
+                            </div>
+                            <div className="pb-4 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <p className={`text-sm font-medium ${step.done ? 'text-gray-900' : isCurrent ? 'text-indigo-600' : 'text-gray-400'}`}>{step.stage}</p>
+                                {isCurrent && <span className="text-[10px] font-semibold bg-indigo-100 text-indigo-600 rounded px-1.5 py-0.5">Current</span>}
+                                {step.date && <span className="text-xs text-gray-400">{step.date}</span>}
+                              </div>
+                              {step.note && <p className="text-xs text-gray-500 mt-0.5">{step.note}</p>}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* ── APPLICATION TAB ── */}
+              {modalTab === 'application' && (
+                <div className="space-y-5">
+                  {/* Cover Letter */}
+                  <div>
+                    <h4 className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-1.5">
+                      <DocumentTextIcon className="h-4 w-4 text-indigo-500" /> Cover Letter / Proposal
+                    </h4>
+                    <div className="rounded-xl bg-gray-50 border border-gray-100 p-4">
+                      <p className="text-sm text-gray-700 leading-relaxed">{selectedApp.proposal.coverLetter}</p>
+                    </div>
+                  </div>
+
+                  {/* Bid Details */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="rounded-xl border border-gray-100 p-4">
+                      <p className="text-xs font-medium text-gray-500 mb-1 flex items-center gap-1"><CurrencyDollarIcon className="h-3.5 w-3.5" /> Proposed Budget</p>
+                      <p className="text-xl font-bold text-emerald-600">${selectedApp.proposedBudget}</p>
+                    </div>
+                    <div className="rounded-xl border border-gray-100 p-4">
+                      <p className="text-xs font-medium text-gray-500 mb-1 flex items-center gap-1"><CalendarDaysIcon className="h-3.5 w-3.5" /> Proposed Timeline</p>
+                      <p className="text-xl font-bold text-gray-900">{selectedApp.proposal.proposedTimeline}</p>
+                    </div>
+                  </div>
+
+                  {/* Availability */}
+                  <div className="rounded-xl border border-gray-100 p-4">
+                    <p className="text-xs font-medium text-gray-500 mb-1 flex items-center gap-1"><BriefcaseIcon className="h-3.5 w-3.5" /> Availability Stated</p>
+                    <p className="text-sm font-semibold text-gray-800">{selectedApp.proposal.availability}</p>
+                  </div>
+
+                  {/* Skills Highlighted */}
+                  <div>
+                    <p className="text-xs font-medium text-gray-500 mb-2">Skills Highlighted</p>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedApp.proposal.relevantSkills.map((skill) => (
+                        <span key={skill} className="rounded-xl bg-indigo-50 px-3 py-1 text-xs font-medium text-indigo-600 ring-1 ring-inset ring-indigo-200">{skill}</span>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Attached Files */}
+                  {selectedApp.proposal.attachedSamples.length > 0 && (
+                    <div>
+                      <p className="text-xs font-medium text-gray-500 mb-2">Attached Samples / Files</p>
+                      <div className="space-y-2">
+                        {selectedApp.proposal.attachedSamples.map((file) => {
+                          const ext = file.split('.').pop();
+                          const colors = { pdf: 'bg-red-50 text-red-600', txt: 'bg-blue-50 text-blue-600', ipynb: 'bg-orange-50 text-orange-600', fig: 'bg-pink-50 text-pink-600' };
+                          return (
+                            <div key={file} className="flex items-center gap-3 rounded-lg border border-gray-100 p-2.5">
+                              <div className={`w-8 h-8 rounded-lg ${colors[ext] || 'bg-gray-50 text-gray-500'} flex items-center justify-center shrink-0`}>
+                                <span className="text-[10px] font-bold uppercase">{ext}</span>
+                              </div>
+                              <span className="text-sm text-gray-700 flex-1">{file}</span>
+                              <EyeIcon className="h-4 w-4 text-gray-400" />
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
-                  );
-                })}
-              </div>
-            </div>
+                  )}
+                </div>
+              )}
 
-            {/* Actions */}
-            <div className="flex gap-3 pt-2 border-t border-gray-100">
-              <Link to={`/student/gigs/${selectedApp.gigId}`} className="flex-1">
-                <Button variant="secondary" className="w-full">
-                  <EyeIcon className="h-4 w-4 mr-2" /> View Gig
-                </Button>
-              </Link>
-              {selectedApp.status === 'accepted' && (
-                <Link to="/student/chat" className="flex-1">
-                  <Button variant="gradient" className="w-full">
-                    <ChatBubbleLeftRightIcon className="h-4 w-4 mr-2" /> Message Recruiter
+              {/* Footer Actions */}
+              <div className="flex gap-3 pt-4 mt-4 border-t border-gray-100">
+                <Link to={`/student/gigs/${selectedApp.gigId}`} className="flex-1">
+                  <Button variant="secondary" className="w-full">
+                    <EyeIcon className="h-4 w-4 mr-2" /> View Gig
                   </Button>
                 </Link>
-              )}
-              {selectedApp.status === 'pending' && (
-                <Button variant="danger" className="flex-1" onClick={() => { setSelectedApp(null); setWithdrawApp(selectedApp); }}>
-                  <XMarkIcon className="h-4 w-4 mr-2" /> Withdraw
-                </Button>
-              )}
+                {selectedApp.status === 'accepted' && (
+                  <Link to="/student/chat" className="flex-1">
+                    <Button variant="gradient" className="w-full">
+                      <ChatBubbleLeftRightIcon className="h-4 w-4 mr-2" /> Message Recruiter
+                    </Button>
+                  </Link>
+                )}
+                {selectedApp.status === 'pending' && (
+                  <Button variant="danger" className="flex-1" onClick={() => { setSelectedApp(null); setWithdrawApp(selectedApp); }}>
+                    <XMarkIcon className="h-4 w-4 mr-2" /> Withdraw
+                  </Button>
+                )}
+              </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
       </Modal>
 
       {/* Withdraw Confirmation */}

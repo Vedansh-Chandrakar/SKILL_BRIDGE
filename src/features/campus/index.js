@@ -1,3 +1,5 @@
+import './campus.css';
+
 export { default as CampusDashboard } from './CampusDashboard';
 export { default as CampusStudentListPage } from './CampusStudentListPage';
 export { default as CampusProfilePage } from './CampusProfilePage';

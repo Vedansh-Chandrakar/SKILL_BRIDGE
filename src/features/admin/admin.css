@@ -1,0 +1,203 @@
+/* ── Admin Feature Styles ──────────────────────────────── */
+
+/* Admin dashboard */
+.admin-stats-row {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+@media (min-width: 640px) {
+  .admin-stats-row { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (min-width: 1024px) {
+  .admin-stats-row { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* Admin data table */
+.admin-table-wrapper {
+  background: #ffffff;
+  border-radius: 1rem;
+  border: 1px solid #f3f4f6;
+  overflow: hidden;
+}
+
+.admin-table-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.admin-table-header__title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.admin-table-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Campus management cards */
+.campus-mgmt-card {
+  background: #ffffff;
+  border-radius: 1rem;
+  border: 1px solid #f3f4f6;
+  padding: 1.5rem;
+  transition: all 0.2s ease;
+}
+
+.campus-mgmt-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  transform: translateY(-1px);
+}
+
+.campus-mgmt-card__logo {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.75rem;
+  background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6366f1;
+  font-weight: 700;
+  font-size: 1.125rem;
+  margin-bottom: 1rem;
+}
+
+.campus-mgmt-card__name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.campus-mgmt-card__meta {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.75rem;
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+/* Verification requests */
+.verification-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: #ffffff;
+  border-radius: 0.75rem;
+  border: 1px solid #f3f4f6;
+  transition: all 0.15s ease;
+}
+
+.verification-card:hover {
+  border-color: #e0e7ff;
+}
+
+.verification-card__badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.verification-card__badge--pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.verification-card__badge--approved {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.verification-card__badge--rejected {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* Moderation page */
+.moderation-flag {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  background: #ffffff;
+  border-radius: 0.75rem;
+  border: 1px solid #f3f4f6;
+  border-left: 3px solid #ef4444;
+}
+
+.moderation-flag--warning {
+  border-left-color: #f59e0b;
+}
+
+.moderation-flag--info {
+  border-left-color: #3b82f6;
+}
+
+/* Admin analytics */
+.analytics-donut {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 10rem;
+  height: 10rem;
+  margin: 0 auto 1rem;
+}
+
+.analytics-donut__label {
+  position: absolute;
+  text-align: center;
+}
+
+.analytics-donut__value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.analytics-donut__subtitle {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+/* User management */
+.user-mgmt-avatar-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.user-mgmt-role-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+}
+
+.user-mgmt-role-badge--admin {
+  background: #fce7f3;
+  color: #9d174d;
+}
+
+.user-mgmt-role-badge--campus {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.user-mgmt-role-badge--student {
+  background: #d1fae5;
+  color: #065f46;
+}

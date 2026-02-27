@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  PageHeader, Card, CardHeader, Badge, Button, Modal, Input, Textarea, Select, SearchInput, EmptyState,
+  PageHeader, Card, CardHeader, Badge, Button, Modal, Input, Textarea, SearchInput, EmptyState,
   Table, TableHead, TableHeader, TableBody, TableRow, TableCell,
 } from '@/components/shared';
 import {
@@ -35,6 +35,8 @@ export default function CompanyOpportunitiesPage() {
   const [typeFilter, setTypeFilter] = useState('all');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [deleteOpp, setDeleteOpp] = useState(null);
+  const [editOpp, setEditOpp] = useState(null);
+  const [editForm, setEditForm] = useState({});
   const [form, setForm] = useState({
     company: '', role: '', type: 'Internship', location: '', salary: '', description: '', requirements: '', deadline: '',
   });
@@ -62,6 +64,26 @@ export default function CompanyOpportunitiesPage() {
   const handleDelete = () => {
     setOpportunities((prev) => prev.filter((o) => o.id !== deleteOpp.id));
     setDeleteOpp(null);
+  };
+
+  const openEdit = (opp) => {
+    setEditOpp(opp);
+    setEditForm({
+      company: opp.company, role: opp.role, type: opp.type,
+      location: opp.location, salary: opp.salary,
+      description: opp.description,
+      requirements: opp.requirements.join(', '),
+      deadline: opp.deadline, status: opp.status,
+    });
+  };
+
+  const handleEditSave = () => {
+    setOpportunities((prev) => prev.map((o) =>
+      o.id === editOpp.id
+        ? { ...o, ...editForm, requirements: editForm.requirements.split(',').map((r) => r.trim()).filter(Boolean) }
+        : o,
+    ));
+    setEditOpp(null);
   };
 
   return (
@@ -104,13 +126,17 @@ export default function CompanyOpportunitiesPage() {
           <div className="flex-1">
             <SearchInput value={search} onChange={setSearch} placeholder="Search by company or role..." />
           </div>
-          <Select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)}>
+          <select
+            value={typeFilter}
+            onChange={(e) => setTypeFilter(e.target.value)}
+            className="rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 pr-9 text-sm text-gray-700 shadow-sm appearance-none focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 hover:border-gray-300"
+          >
             <option value="all">All Types</option>
             <option value="Internship">Internship</option>
             <option value="Full-time">Full-time</option>
             <option value="Contract">Contract</option>
             <option value="Part-time">Part-time</option>
-          </Select>
+          </select>
         </div>
       </Card>
 
@@ -157,7 +183,7 @@ export default function CompanyOpportunitiesPage() {
                   <Link to={`/campus/opportunities/${opp.id}/applicants`} className="rounded-lg p-1.5 text-gray-400 hover:bg-indigo-50 hover:text-indigo-600 transition-colors" title="View applicants">
                     <UserGroupIcon className="h-4 w-4" />
                   </Link>
-                  <button className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors" title="Edit">
+                  <button onClick={() => openEdit(opp)} className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors" title="Edit">
                     <PencilSquareIcon className="h-4 w-4" />
                   </button>
                   <button onClick={() => setDeleteOpp(opp)} className="rounded-lg p-1.5 text-gray-400 hover:bg-red-50 hover:text-red-600 transition-colors" title="Delete">
@@ -176,12 +202,15 @@ export default function CompanyOpportunitiesPage() {
           <div className="grid gap-4 sm:grid-cols-2">
             <Input label="Company Name" placeholder="e.g. TechCorp Inc." value={form.company} onChange={(e) => setForm((f) => ({ ...f, company: e.target.value }))} />
             <Input label="Role Title" placeholder="e.g. Frontend Developer Intern" value={form.role} onChange={(e) => setForm((f) => ({ ...f, role: e.target.value }))} />
-            <Select label="Type" value={form.type} onChange={(e) => setForm((f) => ({ ...f, type: e.target.value }))}>
-              <option value="Internship">Internship</option>
-              <option value="Full-time">Full-time</option>
-              <option value="Contract">Contract</option>
-              <option value="Part-time">Part-time</option>
-            </Select>
+            <div>
+              <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Type</label>
+              <select value={form.type} onChange={(e) => setForm((f) => ({ ...f, type: e.target.value }))} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-100">
+                <option value="Internship">Internship</option>
+                <option value="Full-time">Full-time</option>
+                <option value="Contract">Contract</option>
+                <option value="Part-time">Part-time</option>
+              </select>
+            </div>
             <Input label="Location" placeholder="e.g. Remote / New York" value={form.location} onChange={(e) => setForm((f) => ({ ...f, location: e.target.value }))} />
             <Input label="Salary/Stipend" placeholder="e.g. $2,000/mo" value={form.salary} onChange={(e) => setForm((f) => ({ ...f, salary: e.target.value }))} />
             <Input label="Deadline" type="date" value={form.deadline} onChange={(e) => setForm((f) => ({ ...f, deadline: e.target.value }))} />
@@ -195,6 +224,65 @@ export default function CompanyOpportunitiesPage() {
             <Button variant="secondary" onClick={() => setShowCreateModal(false)}>Cancel</Button>
           </div>
         </div>
+      </Modal>
+
+      {/* ── Edit Opportunity Modal ── */}
+      <Modal open={!!editOpp} onClose={() => setEditOpp(null)} title="Edit Opportunity" size="lg">
+        {editOpp && (
+          <div className="space-y-4">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Company Name</label>
+                <input type="text" value={editForm.company} onChange={(e) => setEditForm((f) => ({ ...f, company: e.target.value }))} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-100" />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Role Title</label>
+                <input type="text" value={editForm.role} onChange={(e) => setEditForm((f) => ({ ...f, role: e.target.value }))} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-100" />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Type</label>
+                <select value={editForm.type} onChange={(e) => setEditForm((f) => ({ ...f, type: e.target.value }))} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-100">
+                  <option>Internship</option>
+                  <option>Full-time</option>
+                  <option>Contract</option>
+                  <option>Part-time</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Location</label>
+                <input type="text" value={editForm.location} onChange={(e) => setEditForm((f) => ({ ...f, location: e.target.value }))} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-100" />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Salary / Stipend</label>
+                <input type="text" value={editForm.salary} onChange={(e) => setEditForm((f) => ({ ...f, salary: e.target.value }))} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-100" />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Deadline</label>
+                <input type="date" value={editForm.deadline} onChange={(e) => setEditForm((f) => ({ ...f, deadline: e.target.value }))} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-100" />
+              </div>
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Description</label>
+              <textarea rows={3} value={editForm.description} onChange={(e) => setEditForm((f) => ({ ...f, description: e.target.value }))} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-100" />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Requirements (comma-separated)</label>
+              <input type="text" value={editForm.requirements} onChange={(e) => setEditForm((f) => ({ ...f, requirements: e.target.value }))} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-100" />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Status</label>
+              <select value={editForm.status} onChange={(e) => setEditForm((f) => ({ ...f, status: e.target.value }))} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-100">
+                <option value="active">Active</option>
+                <option value="closed">Closed</option>
+                <option value="draft">Draft</option>
+              </select>
+            </div>
+            <div className="flex gap-3 pt-2">
+              <Button variant="gradient" className="flex-1" onClick={handleEditSave} disabled={!editForm.company || !editForm.role}>Save Changes</Button>
+              <Button variant="secondary" onClick={() => setEditOpp(null)}>Cancel</Button>
+            </div>
+          </div>
+        )}
       </Modal>
 
       {/* Delete Confirmation */}

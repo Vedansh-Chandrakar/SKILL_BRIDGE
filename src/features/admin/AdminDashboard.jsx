@@ -1,4 +1,5 @@
 import { PageHeader, StatCard, Card, CardHeader, Badge, Avatar } from '@/components/shared';
+import { useNavigate } from 'react-router-dom';
 import {
   BuildingLibraryIcon,
   UsersIcon,
@@ -6,6 +7,7 @@ import {
   ChartBarIcon,
   ArrowTrendingUpIcon,
   CurrencyDollarIcon,
+  ArrowRightIcon,
 } from '@heroicons/react/24/outline';
 
 const stats = [
@@ -33,6 +35,7 @@ const topCampuses = [
 ];
 
 export default function AdminDashboard() {
+  const navigate = useNavigate();
   return (
     <div>
       <PageHeader
@@ -69,7 +72,16 @@ export default function AdminDashboard() {
 
         {/* Top campuses */}
         <Card className="lg:col-span-2">
-          <CardHeader title="Top Campuses" subtitle="By student count" />
+          <div className="flex items-start justify-between">
+            <CardHeader title="Top Campuses" subtitle="By student count" />
+            <button
+              onClick={() => navigate('/admin/campuses')}
+              className="flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-medium text-indigo-600 hover:bg-indigo-50 transition-colors flex-shrink-0 mt-0.5"
+            >
+              View all
+              <ArrowRightIcon className="h-3 w-3" />
+            </button>
+          </div>
           <div className="mt-4 space-y-3">
             {topCampuses.map((c, i) => (
               <div key={c.name} className="flex items-center gap-3 rounded-xl p-3 transition-colors hover:bg-gray-50">

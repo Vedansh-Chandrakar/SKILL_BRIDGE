@@ -86,6 +86,37 @@ export default function AdminModerationPage() {
   const [selectedReport, setSelectedReport] = useState(null);
   const [actionModal, setActionModal] = useState(null);
   const [actionNote, setActionNote] = useState('');
+  const [actionLogs, setActionLogs] = useState(ACTION_LOGS);
+  const [showBanModal, setShowBanModal] = useState(false);
+  const [showWarnModal, setShowWarnModal] = useState(false);
+  const [showMsgModal, setShowMsgModal] = useState(false);
+  const [overrideForm, setOverrideForm] = useState({ target: '', reason: '', message: '', severity: 'medium' });
+  const [overrideSuccess, setOverrideSuccess] = useState('');
+
+  const addLog = (action, type, target) => {
+    setActionLogs(prev => [{ id: `a-${Date.now()}`, admin: 'Super Admin', action, type, time: 'Just now', target }, ...prev]);
+  };
+
+  const handleBanUser = () => {
+    if (!overrideForm.target.trim()) return;
+    addLog(`Banned user "${overrideForm.target}"`, 'ban', overrideForm.target);
+    setOverrideSuccess(`User "${overrideForm.target}" has been banned.`);
+    setTimeout(() => { setShowBanModal(false); setOverrideForm({ target: '', reason: '', message: '', severity: 'medium' }); setOverrideSuccess(''); }, 1500);
+  };
+
+  const handleIssueWarning = () => {
+    if (!overrideForm.target.trim()) return;
+    addLog(`Warning issued to "${overrideForm.target}"`, 'warning', overrideForm.target);
+    setOverrideSuccess(`Warning issued to "${overrideForm.target}".`);
+    setTimeout(() => { setShowWarnModal(false); setOverrideForm({ target: '', reason: '', message: '', severity: 'medium' }); setOverrideSuccess(''); }, 1500);
+  };
+
+  const handleMessageUser = () => {
+    if (!overrideForm.target.trim() || !overrideForm.message.trim()) return;
+    addLog(`Message sent to "${overrideForm.target}"`, 'config', overrideForm.target);
+    setOverrideSuccess(`Message sent to "${overrideForm.target}".`);
+    setTimeout(() => { setShowMsgModal(false); setOverrideForm({ target: '', reason: '', message: '', severity: 'medium' }); setOverrideSuccess(''); }, 1500);
+  };
 
   const filtered = reports.filter((r) => {
     if (filterStatus !== 'all' && r.status !== filterStatus) return false;
@@ -213,7 +244,7 @@ export default function AdminModerationPage() {
           <Card>
             <CardHeader title="Action Logs" subtitle="Recent moderation actions" />
             <div className="mt-4 space-y-3">
-              {ACTION_LOGS.map((log) => {
+              {actionLogs.map((log) => {
                 const LogIcon = actionLogIcons[log.type] || FlagIcon;
                 const logColor = actionLogColors[log.type] || 'text-gray-600 bg-gray-50';
                 return (
@@ -255,22 +286,152 @@ export default function AdminModerationPage() {
           <Card>
             <CardHeader title="Admin Override" subtitle="Quick actions" />
             <div className="mt-4 space-y-2">
-              <button className="w-full flex items-center gap-2 rounded-xl bg-red-50 px-4 py-2.5 text-sm font-medium text-red-600 hover:bg-red-100 transition-colors">
+              <button onClick={() => { setOverrideForm({ target: '', reason: '', message: '', severity: 'medium' }); setOverrideSuccess(''); setShowBanModal(true); }} className="w-full flex items-center gap-2 rounded-xl bg-red-50 px-4 py-2.5 text-sm font-medium text-red-600 hover:bg-red-100 transition-colors">
                 <NoSymbolIcon className="h-4 w-4" /> Ban User
               </button>
-              <button className="w-full flex items-center gap-2 rounded-xl bg-amber-50 px-4 py-2.5 text-sm font-medium text-amber-600 hover:bg-amber-100 transition-colors">
+              <button onClick={() => { setOverrideForm({ target: '', reason: '', message: '', severity: 'medium' }); setOverrideSuccess(''); setShowWarnModal(true); }} className="w-full flex items-center gap-2 rounded-xl bg-amber-50 px-4 py-2.5 text-sm font-medium text-amber-600 hover:bg-amber-100 transition-colors">
                 <ExclamationTriangleIcon className="h-4 w-4" /> Issue Warning
               </button>
-              <button className="w-full flex items-center gap-2 rounded-xl bg-indigo-50 px-4 py-2.5 text-sm font-medium text-indigo-600 hover:bg-indigo-100 transition-colors">
+              <button onClick={() => { setFilterStatus('pending'); setFilterType('all'); setSearch(''); }} className="w-full flex items-center gap-2 rounded-xl bg-indigo-50 px-4 py-2.5 text-sm font-medium text-indigo-600 hover:bg-indigo-100 transition-colors">
                 <EyeIcon className="h-4 w-4" /> Review Flagged Content
               </button>
-              <button className="w-full flex items-center gap-2 rounded-xl bg-purple-50 px-4 py-2.5 text-sm font-medium text-purple-600 hover:bg-purple-100 transition-colors">
+              <button onClick={() => { setOverrideForm({ target: '', reason: '', message: '', severity: 'medium' }); setOverrideSuccess(''); setShowMsgModal(true); }} className="w-full flex items-center gap-2 rounded-xl bg-purple-50 px-4 py-2.5 text-sm font-medium text-purple-600 hover:bg-purple-100 transition-colors">
                 <ChatBubbleLeftRightIcon className="h-4 w-4" /> Message User
               </button>
             </div>
           </Card>
         </div>
       </div>
+
+      {/* ── Ban User Modal ─────────────────────── */}
+      <Modal open={showBanModal} onClose={() => setShowBanModal(false)} title="Ban User" size="md">
+        <div className="space-y-4">
+          <div className="rounded-xl bg-red-50 p-3 flex items-center gap-2">
+            <NoSymbolIcon className="h-5 w-5 text-red-500 shrink-0" />
+            <p className="text-sm text-red-700">This will permanently ban the user from the platform. This action is logged.</p>
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Username or Email *</label>
+            <input
+              type="text"
+              value={overrideForm.target}
+              onChange={(e) => setOverrideForm(f => ({ ...f, target: e.target.value }))}
+              placeholder="e.g. john_doe or john@example.com"
+              className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm placeholder:text-gray-400 focus:border-red-300 focus:outline-none focus:ring-2 focus:ring-red-100"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Reason for Ban</label>
+            <textarea
+              rows={3}
+              value={overrideForm.reason}
+              onChange={(e) => setOverrideForm(f => ({ ...f, reason: e.target.value }))}
+              placeholder="Describe the reason for banning this user..."
+              className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm placeholder:text-gray-400 focus:border-red-300 focus:outline-none focus:ring-2 focus:ring-red-100"
+            />
+          </div>
+          {overrideSuccess && (
+            <div className="rounded-xl bg-green-50 px-4 py-3 flex items-center gap-2">
+              <CheckCircleIcon className="h-5 w-5 text-green-500" />
+              <p className="text-sm text-green-700 font-medium">{overrideSuccess}</p>
+            </div>
+          )}
+          <div className="flex gap-2 pt-1">
+            <Button variant="danger" onClick={handleBanUser} disabled={!overrideForm.target.trim()}>
+              <NoSymbolIcon className="h-4 w-4 mr-1" /> Confirm Ban
+            </Button>
+            <Button variant="secondary" onClick={() => setShowBanModal(false)}>Cancel</Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* ── Issue Warning Modal ───────────────── */}
+      <Modal open={showWarnModal} onClose={() => setShowWarnModal(false)} title="Issue Warning" size="md">
+        <div className="space-y-4">
+          <div>
+            <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Username or Email *</label>
+            <input
+              type="text"
+              value={overrideForm.target}
+              onChange={(e) => setOverrideForm(f => ({ ...f, target: e.target.value }))}
+              placeholder="e.g. john_doe or john@example.com"
+              className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm placeholder:text-gray-400 focus:border-amber-300 focus:outline-none focus:ring-2 focus:ring-amber-100"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Severity</label>
+            <select
+              value={overrideForm.severity}
+              onChange={(e) => setOverrideForm(f => ({ ...f, severity: e.target.value }))}
+              className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-600 focus:border-amber-300 focus:outline-none focus:ring-2 focus:ring-amber-100"
+            >
+              <option value="low">Low — Minor violation</option>
+              <option value="medium">Medium — Policy breach</option>
+              <option value="high">High — Serious misconduct</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Warning Message</label>
+            <textarea
+              rows={3}
+              value={overrideForm.message}
+              onChange={(e) => setOverrideForm(f => ({ ...f, message: e.target.value }))}
+              placeholder="Describe the violation and expected behaviour..."
+              className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm placeholder:text-gray-400 focus:border-amber-300 focus:outline-none focus:ring-2 focus:ring-amber-100"
+            />
+          </div>
+          {overrideSuccess && (
+            <div className="rounded-xl bg-green-50 px-4 py-3 flex items-center gap-2">
+              <CheckCircleIcon className="h-5 w-5 text-green-500" />
+              <p className="text-sm text-green-700 font-medium">{overrideSuccess}</p>
+            </div>
+          )}
+          <div className="flex gap-2 pt-1">
+            <Button variant="primary" onClick={handleIssueWarning} disabled={!overrideForm.target.trim()} className="bg-amber-600 hover:bg-amber-700 shadow-amber-200">
+              <ExclamationTriangleIcon className="h-4 w-4 mr-1" /> Issue Warning
+            </Button>
+            <Button variant="secondary" onClick={() => setShowWarnModal(false)}>Cancel</Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* ── Message User Modal ────────────────── */}
+      <Modal open={showMsgModal} onClose={() => setShowMsgModal(false)} title="Message User" size="md">
+        <div className="space-y-4">
+          <div>
+            <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Username or Email *</label>
+            <input
+              type="text"
+              value={overrideForm.target}
+              onChange={(e) => setOverrideForm(f => ({ ...f, target: e.target.value }))}
+              placeholder="e.g. john_doe or john@example.com"
+              className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm placeholder:text-gray-400 focus:border-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-100"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Message *</label>
+            <textarea
+              rows={4}
+              value={overrideForm.message}
+              onChange={(e) => setOverrideForm(f => ({ ...f, message: e.target.value }))}
+              placeholder="Write your message to the user..."
+              className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm placeholder:text-gray-400 focus:border-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-100"
+            />
+          </div>
+          {overrideSuccess && (
+            <div className="rounded-xl bg-green-50 px-4 py-3 flex items-center gap-2">
+              <CheckCircleIcon className="h-5 w-5 text-green-500" />
+              <p className="text-sm text-green-700 font-medium">{overrideSuccess}</p>
+            </div>
+          )}
+          <div className="flex gap-2 pt-1">
+            <Button variant="primary" onClick={handleMessageUser} disabled={!overrideForm.target.trim() || !overrideForm.message.trim()}>
+              <ChatBubbleLeftRightIcon className="h-4 w-4 mr-1" /> Send Message
+            </Button>
+            <Button variant="secondary" onClick={() => setShowMsgModal(false)}>Cancel</Button>
+          </div>
+        </div>
+      </Modal>
 
       {/* ── Report Detail Modal ────────────────── */}
       <Modal open={!!selectedReport} onClose={() => setSelectedReport(null)} title="Report Details" size="lg">

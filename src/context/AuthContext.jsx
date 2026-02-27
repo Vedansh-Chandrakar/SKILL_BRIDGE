@@ -24,6 +24,7 @@ const MOCK_USERS = {
     email: 'jane@mit.edu',
     avatar: '',
     type: ROLES.STUDENT,
+    registeredModes: 'both',
     activeMode: STUDENT_MODES.FREELANCER,
     campusId: 'c-mit',
   },
@@ -31,18 +32,43 @@ const MOCK_USERS = {
 
 const AuthContext = createContext(null);
 
+const STORAGE_KEY = 'sb_user_type';
+const STUDENT_MODE_KEY = 'sb_student_mode';
+
+/** Build a student user with the correct registeredModes from storage/param. */
+function buildStudentUser(studentMode) {
+  const mode = studentMode ?? localStorage.getItem(STUDENT_MODE_KEY) ?? 'freelancer';
+  const base = { ...MOCK_USERS.student };
+  base.registeredModes = mode; // 'freelancer' | 'recruiter' | 'both'
+  base.activeMode = mode === 'recruiter' ? STUDENT_MODES.RECRUITER : STUDENT_MODES.FREELANCER;
+  return base;
+}
+
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(MOCK_USERS.student); // default login
+  const [user, setUser] = useState(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved === 'student') return buildStudentUser();
+    return MOCK_USERS[saved] ?? buildStudentUser();
+  });
   const [isAuthenticated, setIsAuthenticated] = useState(true);
 
-  const login = useCallback((userType = 'student') => {
-    setUser(MOCK_USERS[userType] ?? MOCK_USERS.student);
+  const login = useCallback((userType = 'student', studentMode) => {
+    let u;
+    if (userType === 'student' || !MOCK_USERS[userType]) {
+      u = buildStudentUser(studentMode);
+      localStorage.setItem(STUDENT_MODE_KEY, u.registeredModes);
+    } else {
+      u = MOCK_USERS[userType];
+    }
+    setUser(u);
     setIsAuthenticated(true);
+    localStorage.setItem(STORAGE_KEY, u.type);
   }, []);
 
   const logout = useCallback(() => {
     setUser(null);
     setIsAuthenticated(false);
+    localStorage.removeItem(STORAGE_KEY);
   }, []);
 
   const value = useMemo(

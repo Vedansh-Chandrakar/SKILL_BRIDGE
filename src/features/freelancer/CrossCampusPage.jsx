@@ -1,6 +1,8 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { PageHeader, Card, CardHeader, Badge, StatCard, Button, Avatar } from '@/components/shared';
+import { useRole } from '@/hooks';
+import { STUDENT_MODES } from '@/models';
 import {
   GlobeAltIcon,
   BuildingLibraryIcon,
@@ -43,10 +45,13 @@ const COLLABORATION_PROJECTS = [
 ];
 
 export default function CrossCampusPage() {
+  const { activeMode } = useRole();
   const [campusFilter, setCampusFilter] = useState('All Campuses');
   const [search, setSearch] = useState('');
   const [showCollabOnly, setShowCollabOnly] = useState(false);
   const [activeTab, setActiveTab] = useState('gigs');
+
+  if (activeMode === STUDENT_MODES.RECRUITER) return <Navigate to="/student" replace />;
 
   const filteredGigs = CROSS_CAMPUS_GIGS.filter((g) => {
     if (campusFilter !== 'All Campuses' && g.campus !== campusFilter && !g.targetCampuses.includes(campusFilter)) return false;

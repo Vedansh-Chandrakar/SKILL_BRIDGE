@@ -19,6 +19,8 @@ import {
   EyeIcon,
   BriefcaseIcon,
   StarIcon,
+  ClipboardDocumentIcon,
+  CheckIcon,
 } from '@heroicons/react/24/outline';
 import { BookmarkIcon as BookmarkSolid } from '@heroicons/react/24/solid';
 
@@ -89,6 +91,38 @@ export default function GigDetailsPage() {
   const [applyForm, setApplyForm] = useState({ budget: '', coverLetter: '', timeline: '' });
   const [applyLoading, setApplyLoading] = useState(false);
 
+  // Share
+  const [copied, setCopied] = useState(false);
+  const handleShare = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  // Report
+  const [showReport, setShowReport] = useState(false);
+  const [reportReason, setReportReason] = useState('');
+  const [reportDetails, setReportDetails] = useState('');
+  const [reportSent, setReportSent] = useState(false);
+  const handleReport = (e) => {
+    e.preventDefault();
+    setReportSent(true);
+    setTimeout(() => { setShowReport(false); setReportSent(false); setReportReason(''); setReportDetails(''); }, 1500);
+  };
+
+  // Message Recruiter
+  const [showMessage, setShowMessage] = useState(false);
+  const [msgText, setMsgText] = useState('');
+  const [msgSent, setMsgSent] = useState(false);
+  const handleMessage = (e) => {
+    e.preventDefault();
+    setMsgSent(true);
+    setTimeout(() => { setShowMessage(false); setMsgSent(false); setMsgText(''); }, 1500);
+  };
+
+  // View Profile
+  const [showProfile, setShowProfile] = useState(false);
+
   const handleApply = (e) => {
     e.preventDefault();
     setApplyLoading(true);
@@ -102,7 +136,7 @@ export default function GigDetailsPage() {
   const daysLeft = Math.max(0, Math.ceil((new Date(gig.deadline) - new Date()) / 86400000));
 
   return (
-    <div>
+    <>
       {/* Back nav */}
       <button
         onClick={() => navigate(-1)}
@@ -129,10 +163,10 @@ export default function GigDetailsPage() {
                 >
                   {saved ? <BookmarkSolid className="h-5 w-5 text-indigo-500" /> : <BookmarkIcon className="h-5 w-5" />}
                 </button>
-                <button className="rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors" title="Share">
-                  <ShareIcon className="h-5 w-5" />
+                <button onClick={handleShare} className="rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors" title={copied ? 'Copied!' : 'Copy link'}>
+                  {copied ? <CheckIcon className="h-5 w-5 text-emerald-500" /> : <ShareIcon className="h-5 w-5" />}
                 </button>
-                <button className="rounded-lg p-2 text-gray-400 hover:bg-red-50 hover:text-red-600 transition-colors" title="Report">
+                <button onClick={() => setShowReport(true)} className="rounded-lg p-2 text-gray-400 hover:bg-red-50 hover:text-red-600 transition-colors" title="Report">
                   <FlagIcon className="h-5 w-5" />
                 </button>
               </div>
@@ -237,7 +271,7 @@ export default function GigDetailsPage() {
         {/* ── Sidebar ────────────────── */}
         <div className="space-y-6">
           {/* Apply Card */}
-          <Card className="sticky top-6">
+          <Card>
             {applied ? (
               <div className="text-center py-4">
                 <div className="mx-auto h-14 w-14 rounded-full bg-emerald-100 flex items-center justify-center mb-3">
@@ -263,7 +297,7 @@ export default function GigDetailsPage() {
                 >
                   Apply Now
                 </Button>
-                <Button variant="secondary" className="w-full mt-2">
+                <Button variant="secondary" className="w-full mt-2" onClick={() => setShowMessage(true)}>
                   <ChatBubbleLeftRightIcon className="h-4 w-4 mr-2" />
                   Message Recruiter
                 </Button>
@@ -301,7 +335,7 @@ export default function GigDetailsPage() {
                 </div>
               </div>
             </div>
-            <Button variant="ghost" size="sm" className="w-full">View Profile</Button>
+            <Button variant="ghost" size="sm" className="w-full" onClick={() => setShowProfile(true)}>View Profile</Button>
           </Card>
 
           {/* Safety Tips */}
@@ -366,6 +400,121 @@ export default function GigDetailsPage() {
           </div>
         </form>
       </Modal>
-    </div>
+
+      {/* ── Report Modal ─────────────── */}
+      <Modal open={showReport} onClose={() => setShowReport(false)} title="Report Gig" size="md">
+        {reportSent ? (
+          <div className="text-center py-6">
+            <div className="mx-auto h-12 w-12 rounded-full bg-emerald-100 flex items-center justify-center mb-3">
+              <CheckCircleIcon className="h-7 w-7 text-emerald-600" />
+            </div>
+            <p className="font-semibold text-gray-900">Report Submitted</p>
+            <p className="text-sm text-gray-500 mt-1">Our team will review this gig.</p>
+          </div>
+        ) : (
+          <form onSubmit={handleReport} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Reason</label>
+              <select
+                required
+                value={reportReason}
+                onChange={(e) => setReportReason(e.target.value)}
+                className="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+              >
+                <option value="">Select a reason...</option>
+                <option>Spam or misleading</option>
+                <option>Inappropriate content</option>
+                <option>Fraudulent gig</option>
+                <option>Outside platform rules</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <Textarea
+              label="Additional Details (optional)"
+              rows={3}
+              value={reportDetails}
+              onChange={(e) => setReportDetails(e.target.value)}
+              placeholder="Any additional context..."
+            />
+            <div className="flex justify-end gap-3 pt-2 border-t border-gray-100">
+              <Button variant="secondary" type="button" onClick={() => setShowReport(false)}>Cancel</Button>
+              <Button variant="danger" type="submit">Submit Report</Button>
+            </div>
+          </form>
+        )}
+      </Modal>
+
+      {/* ── Message Recruiter Modal ───── */}
+      <Modal open={showMessage} onClose={() => setShowMessage(false)} title={`Message ${gig.postedBy.name}`} size="md">
+        {msgSent ? (
+          <div className="text-center py-6">
+            <div className="mx-auto h-12 w-12 rounded-full bg-emerald-100 flex items-center justify-center mb-3">
+              <CheckCircleIcon className="h-7 w-7 text-emerald-600" />
+            </div>
+            <p className="font-semibold text-gray-900">Message Sent!</p>
+            <p className="text-sm text-gray-500 mt-1">{gig.postedBy.name} will reply soon.</p>
+          </div>
+        ) : (
+          <form onSubmit={handleMessage} className="space-y-4">
+            <div className="flex items-center gap-3 rounded-xl bg-gray-50 p-3">
+              <Avatar name={gig.postedBy.name} size="sm" color="indigo" />
+              <div>
+                <p className="text-sm font-semibold text-gray-900">{gig.postedBy.name}</p>
+                <p className="text-xs text-gray-500">Re: {gig.title}</p>
+              </div>
+            </div>
+            <Textarea
+              label="Your Message"
+              rows={4}
+              required
+              value={msgText}
+              onChange={(e) => setMsgText(e.target.value)}
+              placeholder={`Hi ${gig.postedBy.name.split(' ')[0]}, I'm interested in your gig...`}
+            />
+            <div className="flex justify-end gap-3 pt-2 border-t border-gray-100">
+              <Button variant="secondary" type="button" onClick={() => setShowMessage(false)}>Cancel</Button>
+              <Button variant="gradient" type="submit">Send Message</Button>
+            </div>
+          </form>
+        )}
+      </Modal>
+
+      {/* ── Recruiter Profile Modal ───── */}
+      <Modal open={showProfile} onClose={() => setShowProfile(false)} title="Recruiter Profile" size="md">
+        <div className="space-y-5">
+          <div className="flex items-center gap-4">
+            <Avatar name={gig.postedBy.name} size="lg" color="indigo" />
+            <div>
+              <h3 className="text-lg font-bold text-gray-900">{gig.postedBy.name}</h3>
+              <div className="flex items-center gap-2 text-sm text-gray-500 mt-0.5">
+                <MapPinIcon className="h-3.5 w-3.5" /> {gig.campus}
+              </div>
+              <div className="flex items-center gap-1 mt-1">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <StarIcon key={i} className={`h-3.5 w-3.5 ${i < Math.floor(gig.postedBy.rating) ? 'text-amber-400 fill-amber-400' : 'text-gray-300'}`} />
+                ))}
+                <span className="text-sm font-medium text-gray-700 ml-1">{gig.postedBy.rating}</span>
+              </div>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="rounded-xl bg-indigo-50 p-4 text-center">
+              <p className="text-2xl font-bold text-indigo-700">{gig.postedBy.gigsPosted}</p>
+              <p className="text-xs text-indigo-500 mt-0.5">Gigs Posted</p>
+            </div>
+            <div className="rounded-xl bg-emerald-50 p-4 text-center">
+              <p className="text-2xl font-bold text-emerald-700">{gig.postedBy.rating}</p>
+              <p className="text-xs text-emerald-500 mt-0.5">Avg. Rating</p>
+            </div>
+          </div>
+          <div className="flex gap-3">
+            <Button variant="gradient" className="flex-1" onClick={() => { setShowProfile(false); setShowMessage(true); }}>
+              <ChatBubbleLeftRightIcon className="h-4 w-4 mr-2" /> Send Message
+            </Button>
+            <Button variant="secondary" className="flex-1" onClick={() => setShowProfile(false)}>Close</Button>
+          </div>
+        </div>
+      </Modal>
+    </>
   );
 }

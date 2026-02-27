@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {
-  PageHeader, Card, CardHeader, Badge, Avatar, Button, Modal, SearchInput, Select, Textarea,
+  PageHeader, Card, CardHeader, Badge, Avatar, Button, Modal, SearchInput, Textarea,
   Table, TableHead, TableHeader, TableBody, TableRow, TableCell, EmptyState,
 } from '@/components/shared';
 import {
@@ -87,13 +87,17 @@ export default function CampusGigsMonitorPage() {
           <div className="flex-1">
             <SearchInput value={search} onChange={setSearch} placeholder="Search by gig title or student name..." />
           </div>
-          <Select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 pr-9 text-sm text-gray-700 shadow-sm appearance-none focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 hover:border-gray-300"
+          >
             <option value="all">All Status</option>
             <option value="open">Open</option>
             <option value="in_progress">In Progress</option>
             <option value="completed">Completed</option>
             <option value="deleted">Deleted</option>
-          </Select>
+          </select>
         </div>
       </Card>
 

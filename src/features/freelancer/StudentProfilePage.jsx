@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {
-  PageHeader, Card, CardHeader, Badge, Avatar, Button, Input, Textarea, Select, Modal,
+  PageHeader, Card, CardHeader, Badge, Avatar, Button, Input, Textarea, Modal,
 } from '@/components/shared';
 import {
   PencilSquareIcon,

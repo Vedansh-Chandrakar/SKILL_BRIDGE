@@ -5,7 +5,6 @@ import {
   FaceSmileIcon,
   MagnifyingGlassIcon,
   PhoneIcon,
-  VideoCameraIcon,
   PhotoIcon,
   DocumentIcon,
   XMarkIcon,
@@ -239,10 +238,7 @@ export default function ChatPage() {
               </div>
               <div className="flex items-center gap-1">
                 {!activeContact.group && (
-                  <>
-                    <button className="rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"><PhoneIcon className="h-4 w-4" /></button>
-                    <button className="rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"><VideoCameraIcon className="h-4 w-4" /></button>
-                  </>
+                  <button className="rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"><PhoneIcon className="h-4 w-4" /></button>
                 )}
                 <button onClick={() => setShowInfo(!showInfo)} className={clsx('rounded-lg p-2 transition-colors', showInfo ? 'bg-indigo-50 text-indigo-600' : 'text-gray-400 hover:bg-gray-100 hover:text-gray-600')}>
                   <InformationCircleIcon className="h-4 w-4" />

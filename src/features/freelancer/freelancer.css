@@ -1,0 +1,322 @@
+/* ── Freelancer / Student Feature Styles ──────────────── */
+
+/* Stats grid */
+.student-stats-grid {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+@media (min-width: 640px) {
+  .student-stats-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (min-width: 1280px) {
+  .student-stats-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* Gig card */
+.gig-card {
+  background: #ffffff;
+  border-radius: 1rem;
+  border: 1px solid #f3f4f6;
+  padding: 1.5rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.gig-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #6366f1, #06b6d4);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.gig-card:hover {
+  border-color: #e0e7ff;
+  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.08);
+  transform: translateY(-2px);
+}
+
+.gig-card:hover::before {
+  opacity: 1;
+}
+
+.gig-card__title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 0.5rem;
+}
+
+.gig-card__budget {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #6366f1;
+}
+
+.gig-card__deadline {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.gig-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  margin-top: 0.75rem;
+}
+
+.gig-card__tag {
+  padding: 0.125rem 0.625rem;
+  border-radius: 9999px;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  background: #eef2ff;
+  color: #4338ca;
+}
+
+.gig-card__campus {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+/* Browse gigs page */
+.gigs-grid {
+  display: grid;
+  gap: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .gigs-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (min-width: 1280px) {
+  .gigs-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* Gig details page */
+.gig-details {
+  max-width: 56rem;
+  margin: 0 auto;
+}
+
+.gig-details__hero {
+  background: linear-gradient(135deg, #eef2ff, #faf5ff);
+  border-radius: 1.5rem;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  border: 1px solid #e0e7ff;
+}
+
+.gig-details__title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.gig-details__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.gig-details__meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.875rem;
+  color: #4b5563;
+}
+
+.gig-details__section {
+  margin-bottom: 2rem;
+}
+
+.gig-details__section-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #eef2ff;
+}
+
+/* Applications page */
+.application-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: #ffffff;
+  border-radius: 0.75rem;
+  border: 1px solid #f3f4f6;
+  transition: all 0.15s ease;
+}
+
+.application-card:hover {
+  border-color: #e0e7ff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.application-card__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.application-card__status--pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.application-card__status--accepted {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.application-card__status--rejected {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* Profile page */
+.profile-header {
+  position: relative;
+  border-radius: 1.5rem;
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+.profile-header__banner {
+  height: 10rem;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #06b6d4 100%);
+}
+
+.profile-header__content {
+  padding: 0 2rem 1.5rem;
+  margin-top: -3rem;
+  display: flex;
+  align-items: flex-end;
+  gap: 1.5rem;
+}
+
+.profile-header__avatar {
+  width: 6rem;
+  height: 6rem;
+  border-radius: 50%;
+  border: 4px solid #ffffff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  background: #eef2ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #4f46e5;
+}
+
+.profile-header__info h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.profile-header__info p {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+/* Submissions page */
+.submission-card {
+  background: #ffffff;
+  border-radius: 1rem;
+  border: 1px solid #f3f4f6;
+  padding: 1.25rem;
+  transition: all 0.15s ease;
+}
+
+.submission-card:hover {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+}
+
+.submission-card__file {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: #f9fafb;
+  border-radius: 0.75rem;
+  border: 1px dashed #e5e7eb;
+  margin-top: 0.75rem;
+}
+
+/* Student analytics */
+.analytics-chart-card {
+  background: #ffffff;
+  border-radius: 1rem;
+  border: 1px solid #f3f4f6;
+  padding: 1.5rem;
+}
+
+.analytics-chart-card__title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 1rem;
+}
+
+/* Cross-campus page */
+.cross-campus-card {
+  background: linear-gradient(135deg, #fafbff, #f0f4ff);
+  border-radius: 1rem;
+  border: 1px solid #e0e7ff;
+  padding: 1.25rem;
+  transition: all 0.2s ease;
+}
+
+.cross-campus-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.1);
+}
+
+/* Advanced features / AI page */
+.ai-feature-card {
+  background: #ffffff;
+  border-radius: 1rem;
+  border: 1px solid #f3f4f6;
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.ai-feature-card__shimmer {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.03), transparent);
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}

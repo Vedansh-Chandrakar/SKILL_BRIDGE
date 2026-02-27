@@ -15,10 +15,10 @@ import {
 
 /* ── Mock Data ────────────────────────────────── */
 const STATS = [
-  { title: 'Avg Completion Rate', value: '87%', change: '+3.2%', changeType: 'positive', icon: ChartBarIcon, color: 'indigo' },
-  { title: 'Avg Student Rating', value: '4.5', change: '+0.2', changeType: 'positive', icon: StarIcon, color: 'amber' },
-  { title: 'Total Placements', value: '112', change: '+8 this month', changeType: 'positive', icon: TrophyIcon, color: 'emerald' },
-  { title: 'Active Freelancers', value: '284', change: '+15%', changeType: 'positive', icon: UserGroupIcon, color: 'purple' },
+  { label: 'Avg Completion Rate', value: '87%', change: '+3.2%', changeType: 'positive', icon: ChartBarIcon, iconColor: 'bg-indigo-100 text-indigo-600' },
+  { label: 'Avg Student Rating', value: '4.5', change: '+0.2', changeType: 'positive', icon: StarIcon, iconColor: 'bg-amber-100 text-amber-600' },
+  { label: 'Total Placements', value: '112', change: '+8 this month', changeType: 'positive', icon: TrophyIcon, iconColor: 'bg-emerald-100 text-emerald-600' },
+  { label: 'Active Freelancers', value: '284', change: '+15%', changeType: 'positive', icon: UserGroupIcon, iconColor: 'bg-purple-100 text-purple-600' },
 ];
 
 const TOP_PERFORMERS = [
@@ -78,7 +78,7 @@ export default function CampusAnalyticsPage() {
                 </button>
               ))}
             </div>
-            <Button variant="outline" size="sm">
+            <Button variant="secondary" size="sm">
               <ArrowDownTrayIcon className="h-4 w-4 mr-1" /> Export
             </Button>
           </div>
@@ -87,22 +87,22 @@ export default function CampusAnalyticsPage() {
 
       {/* Stats */}
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4 mb-8">
-        {STATS.map((s) => <StatCard key={s.title} {...s} />)}
+        {STATS.map((s) => <StatCard key={s.label} {...s} />)}
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3 mb-6">
         {/* Performance Chart */}
         <Card className="lg:col-span-2">
           <CardHeader title="Monthly Performance" subtitle="Gigs completed, posted, and applications received" />
-          <div className="mt-6 flex items-end gap-3 h-48">
+          <div className="mt-6 h-52 flex items-end gap-2">
             {MONTHLY_PERFORMANCE.map((d) => (
               <div key={d.month} className="flex-1 flex flex-col items-center gap-1">
-                <div className="w-full flex gap-0.5 items-end justify-center" style={{ height: '100%' }}>
-                  <div className="w-3 rounded-t bg-emerald-400 transition-all" style={{ height: `${(d.completed / maxVal) * 100}%` }} title={`${d.completed} completed`} />
-                  <div className="w-3 rounded-t bg-indigo-400 transition-all" style={{ height: `${(d.posted / maxVal) * 100}%` }} title={`${d.posted} posted`} />
-                  <div className="w-3 rounded-t bg-amber-400 transition-all" style={{ height: `${(d.applications / maxVal) * 100}%` }} title={`${d.applications} applications`} />
+                <div className="w-full flex gap-0.5 items-end justify-center" style={{ height: '180px' }}>
+                  <div className="w-3 rounded-t bg-emerald-400 transition-all" style={{ height: `${(d.completed / maxVal) * 180}px`, minHeight: '4px' }} title={`${d.completed} completed`} />
+                  <div className="w-3 rounded-t bg-indigo-400 transition-all" style={{ height: `${(d.posted / maxVal) * 180}px`, minHeight: '4px' }} title={`${d.posted} posted`} />
+                  <div className="w-3 rounded-t bg-amber-400 transition-all" style={{ height: `${(d.applications / maxVal) * 180}px`, minHeight: '4px' }} title={`${d.applications} applications`} />
                 </div>
-                <span className="text-[10px] text-gray-500 font-medium mt-1">{d.month}</span>
+                <span className="text-[10px] text-gray-500 font-medium">{d.month}</span>
               </div>
             ))}
           </div>
@@ -138,7 +138,9 @@ export default function CampusAnalyticsPage() {
       <div className="grid gap-6 lg:grid-cols-2 mb-6">
         {/* Top Performers */}
         <Card padding={false}>
-          <CardHeader title="Top Performers" subtitle="Students ranked by completions" />
+          <div className="px-5 pt-5 pb-3">
+            <CardHeader title="Top Performers" subtitle="Students ranked by completions" />
+          </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
@@ -179,7 +181,9 @@ export default function CampusAnalyticsPage() {
 
         {/* Recruitment Stats */}
         <Card padding={false}>
-          <CardHeader title="Company Recruitment" subtitle="Hiring pipeline overview" />
+          <div className="px-5 pt-5 pb-3">
+            <CardHeader title="Company Recruitment" subtitle="Hiring pipeline overview" />
+          </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>

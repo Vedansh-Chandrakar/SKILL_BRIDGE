@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {
-  PageHeader, Card, CardHeader, Badge, Avatar, Button, Select,
+  PageHeader, Card, CardHeader, Badge, Avatar, Button,
 } from '@/components/shared';
 import {
   ChartBarIcon,
@@ -64,11 +64,15 @@ export default function CampusActivityMonitorPage() {
         title="Activity Monitor"
         subtitle="Track campus marketplace activity and trends."
         actions={
-          <Select value={timeRange} onChange={(e) => setTimeRange(e.target.value)}>
+          <select
+            value={timeRange}
+            onChange={(e) => setTimeRange(e.target.value)}
+            className="rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 pr-9 text-sm text-gray-700 shadow-sm appearance-none focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 hover:border-gray-300"
+          >
             <option value="7d">Last 7 Days</option>
             <option value="30d">Last 30 Days</option>
             <option value="90d">Last 90 Days</option>
-          </Select>
+          </select>
         }
       />
 

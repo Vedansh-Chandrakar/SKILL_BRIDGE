@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import {
-  PageHeader, Card, CardHeader, Badge, Avatar, Button, Modal, SearchInput, Select,
+  PageHeader, Card, CardHeader, Badge, Avatar, Button, Modal, SearchInput,
   Table, TableHead, TableHeader, TableBody, TableRow, TableCell, EmptyState,
 } from '@/components/shared';
 import {
@@ -112,13 +112,17 @@ export default function CompanyApplicantsPage() {
           <div className="flex-1">
             <SearchInput value={search} onChange={setSearch} placeholder="Search by name or email..." />
           </div>
-          <Select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 pr-9 text-sm text-gray-700 shadow-sm appearance-none focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 hover:border-gray-300"
+          >
             <option value="all">All Status</option>
             <option value="pending">Pending</option>
             <option value="shortlisted">Shortlisted</option>
             <option value="accepted">Accepted</option>
             <option value="rejected">Rejected</option>
-          </Select>
+          </select>
         </div>
       </Card>
 
